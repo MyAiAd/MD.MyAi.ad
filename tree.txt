@@ -1,0 +1,173 @@
+.
+├── README.md
+├── docs
+│   ├── Healthcare Newsletter Platform - Quick Start Guide.pdf
+│   ├── Healthcare Newsletter Platform - User Manual.pdf
+│   ├── Healthcare Newsletter Platform.pdf
+│   ├── ehr-integration-guide.md
+│   ├── images
+│   ├── quick-start-guide.md
+│   └── user-manual.md
+├── implementationplan.txt
+├── jest.config.js
+├── jest.setup.js
+├── next.config.js
+├── package.json
+├── postcss.config.js
+├── public
+│   └── images
+├── src
+│   ├── admin
+│   │   ├── adminjs.ts
+│   │   └── components
+│   │       ├── campaigns
+│   │       │   ├── CampaignAnalytics.tsx
+│   │       │   └── SendCampaign.tsx
+│   │       ├── dashboard
+│   │       │   └── Dashboard.tsx
+│   │       ├── fields
+│   │       │   ├── ArrayField.tsx
+│   │       │   └── ArrayList.tsx
+│   │       ├── index.ts
+│   │       ├── newsletters
+│   │       │   ├── MJMLTemplateEditor.tsx
+│   │       │   ├── PreviewTemplate.tsx
+│   │       │   ├── TemplateEditor.tsx
+│   │       │   └── TemplatePreview.tsx
+│   │       └── patients
+│   │           └── BulkImportPatients.tsx
+│   ├── components
+│   │   ├── dashboard
+│   │   ├── forms
+│   │   │   └── PatientForm.tsx
+│   │   ├── layouts
+│   │   │   └── DashboardLayout.tsx
+│   │   ├── newsletter
+│   │   └── ui
+│   │       ├── Button.tsx
+│   │       ├── Card.tsx
+│   │       └── Table.tsx
+│   ├── contexts
+│   │   └── SessionContext.tsx
+│   ├── emails
+│   │   ├── components
+│   │   │   ├── HealthMetric.tsx
+│   │   │   ├── HealthTip.tsx
+│   │   │   └── MedicationReminder.tsx
+│   │   ├── layouts
+│   │   │   └── BaseLayout.tsx
+│   │   ├── mjml
+│   │   │   ├── components
+│   │   │   │   └── HealthComponents.tsx
+│   │   │   ├── layouts
+│   │   │   │   └── BaseLayout.tsx
+│   │   │   └── templates
+│   │   │       └── DiabetesNewsletter.tsx
+│   │   └── templates
+│   │       ├── DiabetesNewsletter.tsx
+│   │       └── GeneralHealthNewsletter.tsx
+│   ├── lib
+│   │   ├── database.types.ts
+│   │   ├── email-renderer.ts
+│   │   ├── email-service.ts
+│   │   ├── middleware
+│   │   │   └── validate.ts
+│   │   ├── mjml-renderer.ts
+│   │   ├── newsletter-worker.ts
+│   │   ├── redis.ts
+│   │   ├── stripe.ts
+│   │   ├── supabase.ts
+│   │   └── validations
+│   │       ├── analytics.ts
+│   │       ├── newsletter.ts
+│   │       ├── patient.ts
+│   │       └── provider.ts
+│   ├── pages
+│   │   ├── _app.tsx
+│   │   ├── admin
+│   │   ├── api
+│   │   │   ├── admin
+│   │   │   │   ├── dashboard.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── preview-template.ts
+│   │   │   ├── auth
+│   │   │   │   ├── login.ts
+│   │   │   │   ├── register.ts
+│   │   │   │   └── reset-password.ts
+│   │   │   ├── campaigns
+│   │   │   │   ├── [id]
+│   │   │   │   │   ├── analytics.ts
+│   │   │   │   │   ├── job-status.ts
+│   │   │   │   │   ├── send.ts
+│   │   │   │   │   ├── target-count.ts
+│   │   │   │   │   └── test-send.ts
+│   │   │   │   └── index.ts
+│   │   │   ├── docs.ts
+│   │   │   ├── health-outcomes
+│   │   │   │   ├── [id].ts
+│   │   │   │   ├── analytics.ts
+│   │   │   │   ├── bulk-import.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   └── patient
+│   │   │   │       └── [id].ts
+│   │   │   ├── newsletters
+│   │   │   │   └── templates
+│   │   │   │       ├── [id].ts
+│   │   │   │       ├── index.ts
+│   │   │   │       ├── preview-mjml.ts
+│   │   │   │       └── send-test.ts
+│   │   │   ├── patients
+│   │   │   │   ├── [id].ts
+│   │   │   │   ├── bulk-import.ts
+│   │   │   │   ├── create.ts
+│   │   │   │   ├── import.ts
+│   │   │   │   └── index.ts
+│   │   │   └── stripe
+│   │   │       ├── create-checkout-session.ts
+│   │   │       ├── create-portal-session.ts
+│   │   │       └── webhook.ts
+│   │   ├── auth
+│   │   │   ├── forgot-password.tsx
+│   │   │   ├── signin.tsx
+│   │   │   └── signup.tsx
+│   │   ├── dashboard
+│   │   │   ├── analytics
+│   │   │   ├── analytics.tsx
+│   │   │   ├── billing
+│   │   │   ├── billing.tsx
+│   │   │   ├── campaigns
+│   │   │   ├── campaigns.tsx
+│   │   │   ├── index.tsx
+│   │   │   ├── newsletters
+│   │   │   │   └── templates
+│   │   │   │       └── [id].tsx
+│   │   │   ├── newsletters.tsx
+│   │   │   ├── patients
+│   │   │   ├── patients.tsx
+│   │   │   ├── settings
+│   │   │   └── settings.tsx
+│   │   ├── docs.tsx
+│   │   └── index.tsx
+│   ├── styles
+│   │   └── globals.css
+│   └── tests
+│       ├── integration
+│       │   ├── api
+│       │   │   └── patients.test.ts
+│       │   ├── lib
+│       │   └── validations
+│       └── unit
+│           ├── api
+│           ├── lib
+│           │   ├── email-renderer.test.ts
+│           │   ├── redis.test.ts
+│           │   ├── stripe.test.ts
+│           │   └── supabase.test.ts
+│           └── validations
+│               ├── newsletter.test.ts
+│               └── patient.test.ts
+├── tailwind.config.js
+├── tree.txt
+└── tsconfig.json
+
+62 directories, 108 files
