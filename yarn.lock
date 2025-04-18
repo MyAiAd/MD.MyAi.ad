@@ -49,6 +49,11 @@
   resolved "https://registry.yarnpkg.com/@adminjs/express/-/express-6.1.1.tgz#582ed4a469bd9c0cac23bb2d51ada235cbf4670d"
   integrity sha512-Th8Oe9lFkHkfmJb6hUe08zwwZOt5afZ2RRMbMZ1Bq7pzEFnJGnTl8jglYNKdc9Fmxtvbabug0wteQ6qCMZuaVQ==
 
+"@adminjs/prisma@^5.0.3":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@adminjs/prisma/-/prisma-5.0.3.tgz#3b4d236286aa3b4e7dc1c747518547a69252f864"
+  integrity sha512-piJsoXTBPwOP1+Dyt+hLqbVvThm819mFSgfCfrMRmAyvSvVIIQPEiX1otA3M1+5QSdSZu4KZP/5vco7lMM9Z/A==
+
 "@adobe/css-tools@^4.0.1":
   version "4.4.2"
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.4.2.tgz#c836b1bd81e6d62cd6cdf3ee4948bcdce8ea79c8"
