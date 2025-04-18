@@ -7,7 +7,7 @@ WORKDIR /app
 
 # Install dependencies
 COPY package.json yarn.lock ./
-RUN yarn install --frozen-lockfile
+RUN yarn install --frozen-lockfile && npx prisma generate
 
 # Copy all source code
 COPY . .

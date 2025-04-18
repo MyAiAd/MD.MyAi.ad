@@ -18,7 +18,7 @@ npm-debug.log*
 .env.production.local
 
 # Misc
-render.yaml
+# render.yaml
 tree.txt
 treeNew.txt
 
