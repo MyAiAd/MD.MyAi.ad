@@ -1,7 +1,6 @@
 // src/admin/adminjs.ts
 import AdminJS from 'adminjs';
 import { Database, Resource } from '@adminjs/prisma';
-import { DMMFClass } from '@prisma/client';
 import { componentLoader, Components } from './components';
 import { PrismaClient } from '@prisma/client';
 
