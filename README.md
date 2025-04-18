@@ -29,3 +29,4 @@ A personalized newsletter platform for healthcare providers to deliver targeted 
 ## License
 
 Copyright (c) 2025 Healthcare Newsletter Platform. All rights reserved.
+// nudge for redeploy
