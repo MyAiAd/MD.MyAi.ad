@@ -2754,6 +2754,11 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.8.tgz#6b79032e760a0899cd4204710beede972a3a185f"
   integrity sha512-P1st0aksCrn9sGZhp8GMYwBnQsbvAWsZAX44oXNNvLHGqAOcoVxmjZiohstwQ7SqKnbR47akdNi+uleWD8+g6A==
 
+"@prisma/client@^6.6.0":
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/@prisma/client/-/client-6.6.0.tgz#21e8cf507091b6cffc8453970f782cb6adef0004"
+  integrity sha512-vfp73YT/BHsWWOAuthKQ/1lBgESSqYqAWZEYyTdGXyFAHpmewwWL2Iz6ErIzkj4aHbuc6/cGSsE6ZY+pBO04Cg==
+
 "@react-aria/focus@^3.17.1":
   version "3.20.2"
   resolved "https://registry.yarnpkg.com/@react-aria/focus/-/focus-3.20.2.tgz#f20cd830d2536b905169a547228c5d5471a874bc"
