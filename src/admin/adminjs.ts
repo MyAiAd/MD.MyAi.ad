@@ -1,7 +1,7 @@
 // src/admin/adminjs.ts
 import AdminJS from 'adminjs';
 import { Database, Resource } from '@adminjs/prisma';
-import { componentLoader, Components } from './components';
+import { componentLoader, Components } from './components.ts';
 import { PrismaClient } from '@prisma/client';
 
 // Register the PrismaJS adapter
