@@ -5,6 +5,7 @@ services:
     plan: starter
     autoDeploy: true
     buildCommand: ""
+    startCommand: yarn start
     envVars:
       - key: NODE_ENV
         value: production
@@ -27,6 +28,7 @@ services:
     plan: starter
     autoDeploy: true
     buildCommand: ""
+    startCommand: yarn ts-node src/lib/newsletter-worker.ts
     envVars:
       - key: NODE_ENV
         value: production
