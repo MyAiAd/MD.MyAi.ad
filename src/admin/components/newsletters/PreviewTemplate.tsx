@@ -1,6 +1,6 @@
 // src/admin/components/newsletters/PreviewTemplate.tsx
 import React, { useState, useEffect } from 'react';
-import { Box, H3, Text, Button, Tab, Tabs, Loader, MessageBox } from '@adminjs/design-system';
+import { Box, H3, Text, Button, Loader, MessageBox } from '@adminjs/design-system';
 import { useRecord, ApiClient } from 'adminjs';
 
 const PreviewTemplate = (props) => {
@@ -67,13 +67,14 @@ const PreviewTemplate = (props) => {
       setError(null);
       setSuccess(null);
       
-      // Call API to send test email
+      // Call API to send test email - fixed API call for AdminJS v7
       const response = await api.resourceAction({
         resourceId: initialRecord.resource.id,
-        recordId: initialRecord.id,
         actionName: 'sendTest',
+        // Use the record ID as part of the data payload instead
         data: {
           email: testEmail,
+          id: initialRecord.id
         },
       });
       
