@@ -21,7 +21,7 @@ const nextConfig = {
       use: [
         {
           loader: 'mjml-loader',
-        },
+        }, 
       ],
     });
     
