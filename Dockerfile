@@ -7,15 +7,19 @@ RUN apk add --no-cache libc6-compat openssl
 # Create working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and prisma schema
 COPY package.json yarn.lock* package-lock.json* ./
+COPY prisma ./prisma
 
-# Install dependencies
+# Install dependencies without running postinstall scripts yet
 RUN \
-  if [ -f yarn.lock ]; then yarn install; \
-  elif [ -f package-lock.json ]; then npm ci; \
-  else npm i; \
+  if [ -f yarn.lock ]; then yarn install --ignore-scripts; \
+  elif [ -f package-lock.json ]; then npm ci --ignore-scripts; \
+  else npm i --ignore-scripts; \
   fi
+
+# Now generate Prisma client
+RUN npx prisma generate
 
 # Build stage
 FROM node:18-alpine AS builder
