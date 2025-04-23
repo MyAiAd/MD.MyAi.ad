@@ -1,5 +1,6 @@
 // src/lib/prisma.ts
-import { PrismaClient } from '@prisma/client'
+// Importing directly from the module since structure changed in v6
+import prisma from '@prisma/client'
 
 // PrismaClient is attached to the `global` object in development to prevent
 // exhausting your database connection limit.
@@ -7,15 +8,14 @@ import { PrismaClient } from '@prisma/client'
 
 declare global {
   // eslint-disable-next-line no-var
-  var prisma: PrismaClient | undefined
+  var prismaClient: typeof prisma | undefined
 }
 
-export const prisma =
-  global.prisma ||
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
-  })
+// Initialize the prisma client
+export const prisma = global.prismaClient || new prisma.PrismaClient({
+  log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
+})
 
-if (process.env.NODE_ENV !== 'production') global.prisma = prisma
+if (process.env.NODE_ENV !== 'production') global.prismaClient = prisma
 
 export default prisma

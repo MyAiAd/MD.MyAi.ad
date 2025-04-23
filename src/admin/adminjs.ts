@@ -1,14 +1,19 @@
 // src/admin/adminjs.ts
 import AdminJS from 'adminjs';
 import { Database, Resource } from '@adminjs/prisma';
-import { PrismaClient } from '@prisma/client';
+// Import from our prisma.ts file which handles the import correctly for v6
+import prisma from '../lib/prisma';
 import { componentLoader, Components } from './components';
 
 // Register the PrismaJS adapter
 AdminJS.registerAdapter({ Database, Resource });
 
-// Create Prisma client
-const prisma = new PrismaClient();
+// DMMFClass interface (if needed)
+interface DMMFClass {
+  datamodel: {
+    models: any[];
+  };
+}
 
 // Export AdminJS configuration function
 export const getAdminJSConfig = async () => {
