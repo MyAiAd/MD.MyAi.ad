@@ -4,10 +4,8 @@ import { Database, Resource } from '@adminjs/prisma';
 // Import directly from @prisma/client to avoid module resolution issues
 import * as prismaClient from '@prisma/client';
 
-// Since we can't easily update all import paths with extensions,
-// let's disable the TypeScript check for this file
-// @ts-ignore
-import { componentLoader, Components } from './components';
+// Import components with proper path
+import { componentLoader, Components } from './components/index';
 
 // Register the PrismaJS adapter
 AdminJS.registerAdapter({ Database, Resource });
