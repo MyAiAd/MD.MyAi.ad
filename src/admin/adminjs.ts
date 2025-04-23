@@ -1,8 +1,8 @@
 // src/admin/adminjs.ts
 import AdminJS from 'adminjs';
 import { Database, Resource } from '@adminjs/prisma';
-// Import directly from @prisma/client to avoid module resolution issues
-import * as prismaClient from '@prisma/client';
+// Import Prisma client correctly
+import { PrismaClient } from '@prisma/client';
 
 // Use full relative path with the .js extension as required by node16 moduleResolution
 import { componentLoader, Components } from './components/index.js';
@@ -11,9 +11,9 @@ import { componentLoader, Components } from './components/index.js';
 AdminJS.registerAdapter({ Database, Resource });
 
 // Create Prisma client
-const prisma = new prismaClient.PrismaClient();
+const prisma = new PrismaClient();
 
-// Interface for DMMF 
+// Interface for DMMF
 interface DMMFClass {
   datamodel: {
     models: any[];
