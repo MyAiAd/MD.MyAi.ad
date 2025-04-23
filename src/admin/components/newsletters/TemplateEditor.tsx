@@ -1,6 +1,6 @@
 // src/admin/components/newsletters/TemplateEditor.tsx
 import React, { useState, useEffect } from 'react';
-import { Box, Button, Text, TextArea, Input, FormGroup, Label, Tabs, TabsContent, TabsHeader, Tab } from '@adminjs/design-system';
+import { Box, Button, Text, TextArea, Input, FormGroup, Label, Tabs } from '@adminjs/design-system';
 import { flat } from 'adminjs';
 
 const { flatten } = flat;
@@ -176,162 +176,201 @@ const TemplateEditor = (props) => {
     <Box>
       <Label>{property.label}</Label>
       
-      <Tabs onChange={(tab) => setActiveTab(tab)}>
-        <TabsHeader>
-          <Tab id="blocks">Content Blocks</Tab>
-          <Tab id="preview">Preview</Tab>
-          <Tab id="json">JSON</Tab>
-        </TabsHeader>
-        
-        <TabsContent id="blocks">
-          <Box marginBottom="xl">
-            <Text fontWeight="bold">Add Content Block:</Text>
-            <Box flex flexDirection="row" flexWrap="wrap" marginTop="sm">
-              <Button size="sm" onClick={() => addContentBlock('text')} marginRight="sm" marginBottom="sm">Text</Button>
-              <Button size="sm" onClick={() => addContentBlock('image')} marginRight="sm" marginBottom="sm">Image</Button>
-              <Button size="sm" onClick={() => addContentBlock('button')} marginRight="sm" marginBottom="sm">Button</Button>
-              <Button size="sm" onClick={() => addContentBlock('divider')} marginRight="sm" marginBottom="sm">Divider</Button>
-              <Button size="sm" onClick={() => addContentBlock('spacer')} marginRight="sm" marginBottom="sm">Spacer</Button>
-              <Button size="sm" onClick={() => addContentBlock('health-info')} marginBottom="sm">Health Info</Button>
-            </Box>
+      {/* Custom Tabs Implementation */}
+      <Box mb="lg">
+        <Box display="flex" borderBottom="1px solid #E2E8F0" marginBottom="lg">
+          <Box 
+            padding="sm" 
+            onClick={() => setActiveTab('blocks')} 
+            style={{ 
+              cursor: 'pointer',
+              fontWeight: activeTab === 'blocks' ? 'bold' : 'normal',
+              borderBottom: activeTab === 'blocks' ? '2px solid #0067b8' : 'none'
+            }}
+          >
+            Content Blocks
           </Box>
-          
-          {content.length === 0 ? (
-            <Box padding="xl" textAlign="center" border="1px solid #E2E8F0" borderRadius="md">
-              <Text>No content blocks added yet. Use the buttons above to add content.</Text>
+          <Box 
+            padding="sm" 
+            onClick={() => setActiveTab('preview')} 
+            style={{ 
+              cursor: 'pointer',
+              fontWeight: activeTab === 'preview' ? 'bold' : 'normal',
+              borderBottom: activeTab === 'preview' ? '2px solid #0067b8' : 'none'
+            }}
+            marginLeft="lg"
+          >
+            Preview
+          </Box>
+          <Box 
+            padding="sm" 
+            onClick={() => setActiveTab('json')} 
+            style={{ 
+              cursor: 'pointer',
+              fontWeight: activeTab === 'json' ? 'bold' : 'normal',
+              borderBottom: activeTab === 'json' ? '2px solid #0067b8' : 'none'
+            }}
+            marginLeft="lg"
+          >
+            JSON
+          </Box>
+        </Box>
+        
+        {activeTab === 'blocks' && (
+          <Box>
+            <Box marginBottom="xl">
+              <Text fontWeight="bold">Add Content Block:</Text>
+              <Box flex flexDirection="row" flexWrap="wrap" marginTop="sm">
+                <Button size="sm" onClick={() => addContentBlock('text')} marginRight="sm" marginBottom="sm">Text</Button>
+                <Button size="sm" onClick={() => addContentBlock('image')} marginRight="sm" marginBottom="sm">Image</Button>
+                <Button size="sm" onClick={() => addContentBlock('button')} marginRight="sm" marginBottom="sm">Button</Button>
+                <Button size="sm" onClick={() => addContentBlock('divider')} marginRight="sm" marginBottom="sm">Divider</Button>
+                <Button size="sm" onClick={() => addContentBlock('spacer')} marginRight="sm" marginBottom="sm">Spacer</Button>
+                <Button size="sm" onClick={() => addContentBlock('health-info')} marginBottom="sm">Health Info</Button>
+              </Box>
             </Box>
-          ) : (
-            content.map((block, index) => (
+            
+            {content.length === 0 ? (
+              <Box padding="xl" textAlign="center" border="1px solid #E2E8F0" borderRadius="md">
+                <Text>No content blocks added yet. Use the buttons above to add content.</Text>
+              </Box>
+            ) : (
+              content.map((block, index) => (
+                <Box
+                  key={block.id}
+                  marginBottom="lg"
+                  padding="lg"
+                  border="1px solid #E2E8F0"
+                  borderRadius="md"
+                >
+                  <Box flex flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="md">
+                    <Text fontWeight="bold">{block.type.charAt(0).toUpperCase() + block.type.slice(1)} Block</Text>
+                    
+                    <Box>
+                      <Button
+                        size="sm"
+                        variant="text"
+                        onClick={() => moveBlock(index, 'up')}
+                        disabled={index === 0}
+                        marginRight="sm"
+                      >
+                        Move Up
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="text"
+                        onClick={() => moveBlock(index, 'down')}
+                        disabled={index === content.length - 1}
+                        marginRight="sm"
+                      >
+                        Move Down
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="danger"
+                        onClick={() => removeBlock(index)}
+                      >
+                        Remove
+                      </Button>
+                    </Box>
+                  </Box>
+                  
+                  {renderBlockEditor(block, index)}
+                  
+                  <Box marginTop="lg">
+                    <Text fontWeight="bold">Display Rules (Optional):</Text>
+                    <Text fontSize="sm" color="grey">
+                      Define conditions when this block should be shown to patients.
+                      If left empty, block will be shown to all patients.
+                    </Text>
+                    
+                    <Box marginTop="sm">
+                      <FormGroup>
+                        <Label>Health Conditions</Label>
+                        <Input
+                          type="text"
+                          value={block.conditions.join(', ')}
+                          onChange={(e) => {
+                            const updatedBlock = { ...block };
+                            updatedBlock.conditions = e.target.value.split(',').map(c => c.trim()).filter(Boolean);
+                            updateBlockContent(index, updatedBlock);
+                          }}
+                          placeholder="E.g. diabetes, hypertension (comma separated)"
+                        />
+                      </FormGroup>
+                      
+                      <FormGroup>
+                        <Label>Medications</Label>
+                        <Input
+                          type="text"
+                          value={block.medications.join(', ')}
+                          onChange={(e) => {
+                            const updatedBlock = { ...block };
+                            updatedBlock.medications = e.target.value.split(',').map(m => m.trim()).filter(Boolean);
+                            updateBlockContent(index, updatedBlock);
+                          }}
+                          placeholder="E.g. metformin, lisinopril (comma separated)"
+                        />
+                      </FormGroup>
+                      
+                      <FormGroup>
+                        <Label>Dietary Restrictions</Label>
+                        <Input
+                          type="text"
+                          value={block.dietary.join(', ')}
+                          onChange={(e) => {
+                            const updatedBlock = { ...block };
+                            updatedBlock.dietary = e.target.value.split(',').map(d => d.trim()).filter(Boolean);
+                            updateBlockContent(index, updatedBlock);
+                          }}
+                          placeholder="E.g. gluten-free, dairy-free (comma separated)"
+                        />
+                      </FormGroup>
+                    </Box>
+                  </Box>
+                </Box>
+              ))
+            )}
+          </Box>
+        )}
+        
+        {activeTab === 'preview' && (
+          <Box>
+            {previewHtml ? (
               <Box
-                key={block.id}
-                marginBottom="lg"
-                padding="lg"
                 border="1px solid #E2E8F0"
                 borderRadius="md"
+                overflow="hidden"
+                maxHeight="600px"
               >
-                <Box flex flexDirection="row" justifyContent="space-between" alignItems="center" marginBottom="md">
-                  <Text fontWeight="bold">{block.type.charAt(0).toUpperCase() + block.type.slice(1)} Block</Text>
-                  
-                  <Box>
-                    <Button
-                      size="sm"
-                      variant="text"
-                      onClick={() => moveBlock(index, 'up')}
-                      disabled={index === 0}
-                      marginRight="sm"
-                    >
-                      Move Up
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="text"
-                      onClick={() => moveBlock(index, 'down')}
-                      disabled={index === content.length - 1}
-                      marginRight="sm"
-                    >
-                      Move Down
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="danger"
-                      onClick={() => removeBlock(index)}
-                    >
-                      Remove
-                    </Button>
-                  </Box>
-                </Box>
-                
-                {renderBlockEditor(block, index)}
-                
-                <Box marginTop="lg">
-                  <Text fontWeight="bold">Display Rules (Optional):</Text>
-                  <Text fontSize="sm" color="grey">
-                    Define conditions when this block should be shown to patients.
-                    If left empty, block will be shown to all patients.
-                  </Text>
-                  
-                  <Box marginTop="sm">
-                    <FormGroup>
-                      <Label>Health Conditions</Label>
-                      <Input
-                        type="text"
-                        value={block.conditions.join(', ')}
-                        onChange={(e) => {
-                          const updatedBlock = { ...block };
-                          updatedBlock.conditions = e.target.value.split(',').map(c => c.trim()).filter(Boolean);
-                          updateBlockContent(index, updatedBlock);
-                        }}
-                        placeholder="E.g. diabetes, hypertension (comma separated)"
-                      />
-                    </FormGroup>
-                    
-                    <FormGroup>
-                      <Label>Medications</Label>
-                      <Input
-                        type="text"
-                        value={block.medications.join(', ')}
-                        onChange={(e) => {
-                          const updatedBlock = { ...block };
-                          updatedBlock.medications = e.target.value.split(',').map(m => m.trim()).filter(Boolean);
-                          updateBlockContent(index, updatedBlock);
-                        }}
-                        placeholder="E.g. metformin, lisinopril (comma separated)"
-                      />
-                    </FormGroup>
-                    
-                    <FormGroup>
-                      <Label>Dietary Restrictions</Label>
-                      <Input
-                        type="text"
-                        value={block.dietary.join(', ')}
-                        onChange={(e) => {
-                          const updatedBlock = { ...block };
-                          updatedBlock.dietary = e.target.value.split(',').map(d => d.trim()).filter(Boolean);
-                          updateBlockContent(index, updatedBlock);
-                        }}
-                        placeholder="E.g. gluten-free, dairy-free (comma separated)"
-                      />
-                    </FormGroup>
-                  </Box>
-                </Box>
+                <iframe
+                  srcDoc={previewHtml}
+                  style={{ width: '100%', height: '600px', border: 'none' }}
+                  title="Newsletter Preview"
+                />
               </Box>
-            ))
-          )}
-        </TabsContent>
-        
-        <TabsContent id="preview">
-          {previewHtml ? (
-            <Box
-              border="1px solid #E2E8F0"
-              borderRadius="md"
-              overflow="hidden"
-              maxHeight="600px"
-            >
-              <iframe
-                srcDoc={previewHtml}
-                style={{ width: '100%', height: '600px', border: 'none' }}
-                title="Newsletter Preview"
-              />
+            ) : (
+              <Box padding="xl" textAlign="center" border="1px solid #E2E8F0" borderRadius="md">
+                <Text>Loading preview...</Text>
+              </Box>
+            )}
+            
+            <Box marginTop="lg">
+              <Button onClick={generatePreview}>Refresh Preview</Button>
             </Box>
-          ) : (
-            <Box padding="xl" textAlign="center" border="1px solid #E2E8F0" borderRadius="md">
-              <Text>Loading preview...</Text>
-            </Box>
-          )}
-          
-          <Box marginTop="lg">
-            <Button onClick={generatePreview}>Refresh Preview</Button>
           </Box>
-        </TabsContent>
+        )}
         
-        <TabsContent id="json">
-          <TextArea
-            style={{ height: '400px', fontFamily: 'monospace' }}
-            value={JSON.stringify(content, null, 2)}
-            readOnly
-          />
-        </TabsContent>
-      </Tabs>
+        {activeTab === 'json' && (
+          <Box>
+            <TextArea
+              style={{ height: '400px', fontFamily: 'monospace' }}
+              value={JSON.stringify(content, null, 2)}
+              readOnly
+            />
+          </Box>
+        )}
+      </Box>
     </Box>
   );
 };
