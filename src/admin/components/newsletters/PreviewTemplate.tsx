@@ -1,6 +1,6 @@
 // src/admin/components/newsletters/PreviewTemplate.tsx
 import React, { useState, useEffect } from 'react';
-import { Box, H3, Text, Button, Tab, Tabs, TabContent, TabsWrapper, Loader, MessageBox } from '@adminjs/design-system';
+import { Box, H3, Text, Button, Tab, Tabs, Loader, MessageBox } from '@adminjs/design-system';
 import { useRecord, ApiClient } from 'adminjs';
 
 const PreviewTemplate = (props) => {
@@ -97,14 +97,35 @@ const PreviewTemplate = (props) => {
         <Text>Preview how your newsletter template will look when sent to patients.</Text>
       </Box>
       
-      <Tabs onChange={(tab) => setActiveTab(tab)}>
-        <TabsWrapper>
-          <Tab id="preview">Preview</Tab>
-          <Tab id="send-test">Send Test Email</Tab>
-        </TabsWrapper>
+      <Box mb="lg">
+        <Box display="flex" borderBottom="1px solid #E2E8F0" marginBottom="lg">
+          <Box 
+            padding="sm" 
+            onClick={() => setActiveTab('preview')} 
+            style={{ 
+              cursor: 'pointer',
+              fontWeight: activeTab === 'preview' ? 'bold' : 'normal',
+              borderBottom: activeTab === 'preview' ? '2px solid #0067b8' : 'none'
+            }}
+          >
+            Preview
+          </Box>
+          <Box 
+            padding="sm" 
+            onClick={() => setActiveTab('send-test')} 
+            style={{ 
+              cursor: 'pointer',
+              fontWeight: activeTab === 'send-test' ? 'bold' : 'normal',
+              borderBottom: activeTab === 'send-test' ? '2px solid #0067b8' : 'none'
+            }}
+            marginLeft="lg"
+          >
+            Send Test Email
+          </Box>
+        </Box>
         
         {activeTab === 'preview' && (
-          <TabContent>
+          <Box>
             {loading ? (
               <Box display="flex" justifyContent="center" alignItems="center" height="300px">
                 <Loader />
@@ -131,11 +152,11 @@ const PreviewTemplate = (props) => {
             <Box marginTop="lg">
               <Button onClick={generatePreview} disabled={loading}>Refresh Preview</Button>
             </Box>
-          </TabContent>
+          </Box>
         )}
         
         {activeTab === 'send-test' && (
-          <TabContent>
+          <Box>
             <Box marginBottom="xl">
               <Text>Send a test email to verify how your newsletter will appear in email clients.</Text>
             </Box>
@@ -180,7 +201,7 @@ const PreviewTemplate = (props) => {
                 may not appear in the test email.
               </Text>
             </Box>
-          </TabContent>
+          </Box>
         )}
       </Box>
     </Box>
