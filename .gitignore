@@ -1,0 +1,33 @@
+# Node modules
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# System files
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Misc
+# render.yaml
+tree.txt
+treeNew.txt
+
+# Editor/IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+
+.env*
+.env*

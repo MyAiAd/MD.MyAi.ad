@@ -1,0 +1,238 @@
+-- Healthcare Newsletter Platform Database Initialization
+-- Complete schema with MJML support
+
+-- Enable Row Level Security
+--ALTER DATABASE postgres SET "app.settings.jwt_secret" TO 'P6qUeFgB0TOcOBh0zsOLJZCSF21bCumvNBYHsaZED69DdAMD8cKqSIF/v6uKIklYxg9psLFvFkmqQR3FPiv9mg==';
+
+-- Healthcare Providers Table
+CREATE TABLE healthcare_providers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE,
+    subscription_tier TEXT NOT NULL DEFAULT 'base'
+        CHECK (subscription_tier IN ('base', 'professional', 'enterprise')),
+    subscription_status TEXT NOT NULL DEFAULT 'trial'
+        CHECK (subscription_status IN ('active', 'inactive', 'trial')),
+    max_patients INTEGER NOT NULL DEFAULT 1000,
+    custom_domain TEXT,
+    branding_settings JSONB
+);
+
+COMMENT ON TABLE healthcare_providers IS 'Healthcare providers using the newsletter platform';
+
+-- Enable RLS on healthcare_providers
+ALTER TABLE healthcare_providers ENABLE ROW LEVEL SECURITY;
+
+-- Patients Table
+CREATE TABLE patients (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    provider_id UUID NOT NULL REFERENCES healthcare_providers(id) ON DELETE CASCADE,
+    email TEXT NOT NULL,
+    first_name TEXT NOT NULL,
+    last_name TEXT NOT NULL,
+    date_of_birth DATE,
+    health_conditions TEXT[] DEFAULT '{}'::TEXT[],
+    medications TEXT[] DEFAULT '{}'::TEXT[],
+    dietary_restrictions TEXT[] DEFAULT '{}'::TEXT[],
+    consent_status TEXT NOT NULL DEFAULT 'pending'
+        CHECK (consent_status IN ('active', 'pending', 'revoked')),
+    consent_date TIMESTAMP WITH TIME ZONE,
+    preferred_frequency TEXT
+        CHECK (preferred_frequency IN ('daily', 'weekly', 'monthly')),
+    
+    -- Create a unique constraint for provider_id + email to prevent duplicates
+    UNIQUE (provider_id, email)
+);
+
+COMMENT ON TABLE patients IS 'Patients who receive personalized newsletters';
+
+-- Enable RLS on patients
+ALTER TABLE patients ENABLE ROW LEVEL SECURITY;
+
+-- Newsletter Templates Table WITH MJML Support
+CREATE TABLE newsletter_templates (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    provider_id UUID NOT NULL REFERENCES healthcare_providers(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    subject TEXT NOT NULL,
+    -- Two separate fields for different template types
+    content JSONB, -- For React Email templates (JSON structure)
+    mjml_content TEXT, -- For MJML templates (string content)
+    -- Type of template (react-email, mjml-markup, mjml-react)
+    template_type TEXT NOT NULL DEFAULT 'react-email'
+        CHECK (template_type IN ('react-email', 'mjml-markup', 'mjml-react')),
+    target_conditions TEXT[] DEFAULT '{}'::TEXT[],
+    target_medications TEXT[] DEFAULT '{}'::TEXT[],
+    target_dietary TEXT[] DEFAULT '{}'::TEXT[],
+    is_active BOOLEAN NOT NULL DEFAULT true,
+    
+    -- Add a check constraint to ensure either content or mjml_content is not null based on template_type
+    CONSTRAINT valid_template_content CHECK (
+        (template_type = 'react-email' AND content IS NOT NULL) OR
+        ((template_type = 'mjml-markup' OR template_type = 'mjml-react') AND mjml_content IS NOT NULL)
+    )
+);
+
+COMMENT ON TABLE newsletter_templates IS 'Email templates for healthcare newsletters with MJML support';
+
+-- Enable RLS on newsletter_templates
+ALTER TABLE newsletter_templates ENABLE ROW LEVEL SECURITY;
+
+-- Newsletter Campaigns Table
+CREATE TABLE newsletter_campaigns (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    provider_id UUID NOT NULL REFERENCES healthcare_providers(id) ON DELETE CASCADE,
+    template_id UUID NOT NULL REFERENCES newsletter_templates(id) ON DELETE CASCADE,
+    name TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'draft'
+        CHECK (status IN ('draft', 'scheduled', 'sending', 'sent', 'paused')),
+    scheduled_date TIMESTAMP WITH TIME ZONE,
+    sent_date TIMESTAMP WITH TIME ZONE,
+    target_patient_count INTEGER NOT NULL DEFAULT 0,
+    actual_send_count INTEGER NOT NULL DEFAULT 0,
+    open_count INTEGER NOT NULL DEFAULT 0,
+    click_count INTEGER NOT NULL DEFAULT 0
+);
+
+COMMENT ON TABLE newsletter_campaigns IS 'Newsletter campaigns sent to patients';
+
+-- Enable RLS on newsletter_campaigns
+ALTER TABLE newsletter_campaigns ENABLE ROW LEVEL SECURITY;
+
+-- Newsletter Analytics Table
+CREATE TABLE newsletter_analytics (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    campaign_id UUID NOT NULL REFERENCES newsletter_campaigns(id) ON DELETE CASCADE,
+    patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+    email_sent BOOLEAN NOT NULL DEFAULT false,
+    email_delivered BOOLEAN NOT NULL DEFAULT false,
+    email_opened BOOLEAN NOT NULL DEFAULT false,
+    links_clicked TEXT[] DEFAULT '{}'::TEXT[],
+    open_timestamp TIMESTAMP WITH TIME ZONE,
+    click_timestamps JSONB,
+    
+    -- Unique constraint to prevent duplicate analytics entries
+    UNIQUE (campaign_id, patient_id)
+);
+
+COMMENT ON TABLE newsletter_analytics IS 'Email engagement analytics for newsletter campaigns';
+
+-- Enable RLS on newsletter_analytics
+ALTER TABLE newsletter_analytics ENABLE ROW LEVEL SECURITY;
+
+-- Health Outcomes Table
+CREATE TABLE health_outcomes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT now() NOT NULL,
+    provider_id UUID NOT NULL REFERENCES healthcare_providers(id) ON DELETE CASCADE,
+    patient_id UUID NOT NULL REFERENCES patients(id) ON DELETE CASCADE,
+    condition TEXT NOT NULL,
+    measurement_type TEXT NOT NULL,
+    measurement_value NUMERIC NOT NULL,
+    measurement_date TIMESTAMP WITH TIME ZONE NOT NULL,
+    notes TEXT
+);
+
+COMMENT ON TABLE health_outcomes IS 'Patient health outcomes for tracking newsletter effectiveness';
+
+-- Enable RLS on health_outcomes
+ALTER TABLE health_outcomes ENABLE ROW LEVEL SECURITY;
+
+-- Create indexes for better performance
+CREATE INDEX idx_patients_provider_id ON patients(provider_id);
+CREATE INDEX idx_patients_health_conditions ON patients USING GIN(health_conditions);
+CREATE INDEX idx_patients_medications ON patients USING GIN(medications);
+CREATE INDEX idx_patients_dietary_restrictions ON patients USING GIN(dietary_restrictions);
+
+CREATE INDEX idx_templates_provider_id ON newsletter_templates(provider_id);
+CREATE INDEX idx_templates_target_conditions ON newsletter_templates USING GIN(target_conditions);
+CREATE INDEX idx_templates_target_medications ON newsletter_templates USING GIN(target_medications);
+CREATE INDEX idx_templates_target_dietary ON newsletter_templates USING GIN(target_dietary);
+CREATE INDEX idx_templates_template_type ON newsletter_templates(template_type);
+
+CREATE INDEX idx_campaigns_provider_id ON newsletter_campaigns(provider_id);
+CREATE INDEX idx_campaigns_template_id ON newsletter_campaigns(template_id);
+CREATE INDEX idx_campaigns_status ON newsletter_campaigns(status);
+
+CREATE INDEX idx_analytics_campaign_id ON newsletter_analytics(campaign_id);
+CREATE INDEX idx_analytics_patient_id ON newsletter_analytics(patient_id);
+
+CREATE INDEX idx_health_outcomes_provider_id ON health_outcomes(provider_id);
+CREATE INDEX idx_health_outcomes_patient_id ON health_outcomes(patient_id);
+CREATE INDEX idx_health_outcomes_condition ON health_outcomes(condition);
+
+-- Row Level Security Policies
+
+-- Healthcare providers can only see their own record
+CREATE POLICY "Providers can view own record" ON healthcare_providers
+    FOR SELECT USING (auth.uid() = id);
+
+CREATE POLICY "Providers can update own record" ON healthcare_providers
+    FOR UPDATE USING (auth.uid() = id);
+
+-- Patients policies: providers can only see their own patients
+CREATE POLICY "Providers can view own patients" ON patients
+    FOR SELECT USING (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can insert own patients" ON patients
+    FOR INSERT WITH CHECK (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can update own patients" ON patients
+    FOR UPDATE USING (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can delete own patients" ON patients
+    FOR DELETE USING (auth.uid() = provider_id);
+
+-- Templates policies: providers can only see their own templates
+CREATE POLICY "Providers can view own templates" ON newsletter_templates
+    FOR SELECT USING (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can insert own templates" ON newsletter_templates
+    FOR INSERT WITH CHECK (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can update own templates" ON newsletter_templates
+    FOR UPDATE USING (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can delete own templates" ON newsletter_templates
+    FOR DELETE USING (auth.uid() = provider_id);
+
+-- Campaigns policies: providers can only see their own campaigns
+CREATE POLICY "Providers can view own campaigns" ON newsletter_campaigns
+    FOR SELECT USING (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can insert own campaigns" ON newsletter_campaigns
+    FOR INSERT WITH CHECK (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can update own campaigns" ON newsletter_campaigns
+    FOR UPDATE USING (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can delete own campaigns" ON newsletter_campaigns
+    FOR DELETE USING (auth.uid() = provider_id);
+
+-- Analytics policies: providers can only see analytics for their own campaigns
+CREATE POLICY "Providers can view own analytics" ON newsletter_analytics
+    FOR SELECT USING (
+        EXISTS (
+            SELECT 1 FROM newsletter_campaigns
+            WHERE newsletter_campaigns.id = newsletter_analytics.campaign_id
+            AND newsletter_campaigns.provider_id = auth.uid()
+        )
+    );
+
+-- Health outcomes policies: providers can only see outcomes for their own patients
+CREATE POLICY "Providers can view own health outcomes" ON health_outcomes
+    FOR SELECT USING (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can insert own health outcomes" ON health_outcomes
+    FOR INSERT WITH CHECK (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can update own health outcomes" ON health_outcomes
+    FOR UPDATE USING (auth.uid() = provider_id);
+
+CREATE POLICY "Providers can delete own health outcomes" ON health_outcomes
+    FOR DELETE USING (auth.uid() = provider_id);

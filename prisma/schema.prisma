@@ -1,0 +1,141 @@
+// Healthcare Newsletter Platform Prisma Schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Healthcare Providers
+model HealthcareProvider {
+  id                String    @id @default(uuid())
+  createdAt         DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  name              String
+  email             String    @unique
+  subscriptionTier  String    @default("base") @map("subscription_tier")
+  subscriptionStatus String   @default("trial") @map("subscription_status")
+  maxPatients       Int       @default(1000) @map("max_patients")
+  customDomain      String?   @map("custom_domain")
+  brandingSettings  Json?     @map("branding_settings")
+  
+  // Relations
+  patients           Patient[]
+  newsletterTemplates NewsletterTemplate[]
+  newsletterCampaigns NewsletterCampaign[]
+  healthOutcomes      HealthOutcome[]
+
+  @@map("healthcare_providers")
+}
+
+// Patients
+model Patient {
+  id                  String    @id @default(uuid())
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  providerId          String    @map("provider_id")
+  email               String
+  firstName           String    @map("first_name")
+  lastName            String    @map("last_name")
+  dateOfBirth         DateTime? @map("date_of_birth") @db.Date
+  healthConditions    String[]  @default([]) @map("health_conditions")
+  medications         String[]  @default([]) @map("medications")
+  dietaryRestrictions String[]  @default([]) @map("dietary_restrictions")
+  consentStatus       String    @default("pending") @map("consent_status")
+  consentDate         DateTime? @map("consent_date") @db.Timestamptz
+  preferredFrequency  String?   @map("preferred_frequency")
+  
+  // Relations
+  provider            HealthcareProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  newsletterAnalytics NewsletterAnalytic[]
+  healthOutcomes      HealthOutcome[]
+
+  @@unique([providerId, email])
+  @@map("patients")
+}
+
+// Newsletter Templates
+model NewsletterTemplate {
+  id               String    @id @default(uuid())
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  providerId       String    @map("provider_id")
+  name             String
+  subject          String
+  content          Json?
+  mjmlContent      String?   @map("mjml_content")
+  templateType     String    @default("react-email") @map("template_type")
+  targetConditions String[]  @default([]) @map("target_conditions")
+  targetMedications String[] @default([]) @map("target_medications")
+  targetDietary    String[]  @default([]) @map("target_dietary")
+  isActive         Boolean   @default(true) @map("is_active")
+  
+  // Relations
+  provider         HealthcareProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  campaigns        NewsletterCampaign[]
+
+  @@map("newsletter_templates")
+}
+
+// Newsletter Campaigns
+model NewsletterCampaign {
+  id                 String    @id @default(uuid())
+  createdAt          DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  providerId         String    @map("provider_id")
+  templateId         String    @map("template_id") 
+  name               String
+  status             String    @default("draft")
+  scheduledDate      DateTime? @map("scheduled_date") @db.Timestamptz
+  sentDate           DateTime? @map("sent_date") @db.Timestamptz
+  targetPatientCount Int       @default(0) @map("target_patient_count")
+  actualSendCount    Int       @default(0) @map("actual_send_count")
+  openCount          Int       @default(0) @map("open_count")
+  clickCount         Int       @default(0) @map("click_count")
+  
+  // Relations
+  provider          HealthcareProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  template          NewsletterTemplate @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  analytics         NewsletterAnalytic[]
+
+  @@map("newsletter_campaigns")
+}
+
+// Newsletter Analytics
+model NewsletterAnalytic {
+  id             String    @id @default(uuid())
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  campaignId     String    @map("campaign_id")
+  patientId      String    @map("patient_id")
+  emailSent      Boolean   @default(false) @map("email_sent")
+  emailDelivered Boolean   @default(false) @map("email_delivered")
+  emailOpened    Boolean   @default(false) @map("email_opened")
+  linksClicked   String[]  @default([]) @map("links_clicked")
+  openTimestamp  DateTime? @map("open_timestamp") @db.Timestamptz
+  clickTimestamps Json?    @map("click_timestamps")
+  
+  // Relations
+  campaign       NewsletterCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  patient        Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@unique([campaignId, patientId])
+  @@map("newsletter_analytics")
+}
+
+// Health Outcomes
+model HealthOutcome {
+  id               String    @id @default(uuid())
+  createdAt        DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  providerId       String    @map("provider_id")
+  patientId        String    @map("patient_id")
+  condition        String
+  measurementType  String    @map("measurement_type")
+  measurementValue Float     @map("measurement_value")
+  measurementDate  DateTime  @map("measurement_date") @db.Timestamptz
+  notes            String?
+  
+  // Relations
+  provider         HealthcareProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  patient          Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@map("health_outcomes")
+}

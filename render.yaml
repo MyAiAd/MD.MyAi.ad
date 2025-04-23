@@ -1,0 +1,82 @@
+services:
+  # Web service
+  - type: web
+    name: healthcare-newsletter-platform
+    env: node
+    buildCommand: npm ci && npx prisma generate && npx prisma migrate deploy && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 18.17.1
+      - key: DATABASE_URL
+        fromDatabase:
+          name: healthcare-newsletter-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: healthcare-newsletter-redis
+          property: connectionString
+      - key: NEXT_PUBLIC_APP_URL
+        fromService:
+          type: web
+          name: healthcare-newsletter-platform
+          property: url
+      - key: NEXT_PUBLIC_APP_VERSION
+        value: 0.1.0
+      - key: NEXT_PUBLIC_SUPABASE_URL
+        sync: false
+      - key: NEXT_PUBLIC_SUPABASE_ANON_KEY
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+        sync: false
+
+  # Scheduled job for processing newsletters
+  - type: cron
+    name: process-newsletters
+    schedule: "*/30 * * * *"  # Run every 30 minutes
+    buildCommand: npm ci
+    startCommand: node scripts/process-newsletters.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: healthcare-newsletter-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: healthcare-newsletter-redis
+          property: connectionString
+
+# Database
+databases:
+  - name: healthcare-newsletter-db
+    plan: starter
+    postgresMajorVersion: 15
+
+# Redis instance
+services:
+  - type: redis
+    name: healthcare-newsletter-redis
+    ipAllowList:
+      - source: 0.0.0.0/0
+        description: everywhere
+    plan: starter
