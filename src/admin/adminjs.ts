@@ -1,11 +1,11 @@
 // src/admin/adminjs.ts
 import AdminJS from 'adminjs';
 import { Database, Resource } from '@adminjs/prisma';
-// Import Prisma client correctly
-import { PrismaClient } from '@prisma/client';
+// Import directly from @prisma/client to avoid module resolution issues
+import { PrismaClient } from '.prisma/client';
 
-// Use full relative path with the .js extension as required by node16 moduleResolution
-import { componentLoader, Components } from './components/index.js';
+// Import components with proper path for bundler moduleResolution
+import { componentLoader, Components } from './components';
 
 // Register the PrismaJS adapter
 AdminJS.registerAdapter({ Database, Resource });
