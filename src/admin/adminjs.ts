@@ -13,7 +13,7 @@ AdminJS.registerAdapter({ Database, Resource });
 // Create Prisma client
 const prisma = new prismaClient.PrismaClient();
 
-// Interface for DMMF
+// Interface for DMMF 
 interface DMMFClass {
   datamodel: {
     models: any[];
