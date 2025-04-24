@@ -1,5 +1,6 @@
 // src/emails/mjml/components/HealthComponents.tsx 
 import React from 'react';
+import type { MjmlProps } from 'mjml-react';
 import {
   MjmlSection,
   MjmlColumn,
@@ -24,57 +25,73 @@ export const HealthTip: React.FC<HealthTipProps> = ({
   iconUrl,
   accentColor = '#3b82f6'
 }) => {
+  // Create props objects explicitly to avoid TypeScript errors
+  const sectionProps: MjmlProps = {
+    backgroundColor: "#f8fafc",
+    borderRadius: "8px",
+    paddingTop: "10px",
+    paddingBottom: "10px",
+    marginTop: "10px",
+    marginBottom: "10px"
+  };
+
+  const columnProps1: MjmlProps = {
+    width: "20%",
+    verticalAlign: "middle"
+  };
+
+  const imageProps: MjmlProps = {
+    width: "50px",
+    src: iconUrl,
+    alt: title,
+    align: "center"
+  };
+
+  const textIconProps: MjmlProps = {
+    fontSize: "24px",
+    color: accentColor,
+    align: "center"
+  };
+
+  const columnProps2: MjmlProps = {
+    width: "80%"
+  };
+
+  const titleTextProps: MjmlProps = {
+    fontWeight: "600",
+    fontSize: "16px",
+    color: "#0f172a",
+    paddingBottom: "5px"
+  };
+
+  const contentTextProps: MjmlProps = {
+    fontSize: "14px",
+    color: "#334155",
+    lineHeight: "1.5"
+  };
+
   return (
-    <MjmlSection
-      backgroundColor="#f8fafc"
-      borderRadius="8px"
-      paddingTop="10px"
-      paddingBottom="10px"
-      // @ts-expect-error MJML props not fully typed
-      marginTop="10px"
-      // @ts-expect-error MJML props not fully typed
-      marginBottom="10px"
-    >
-      <MjmlColumn width="20%" verticalAlign="middle">
+    <MjmlSection {...sectionProps}>
+      <MjmlColumn {...columnProps1}>
         {iconUrl ? (
-          <MjmlImage
-            width="50px"
-            src={iconUrl}
-            alt={title}
-            align="center"
-          />
+          <MjmlImage {...imageProps} />
         ) : (
-          <MjmlText
-            fontSize="24px"
-            color={accentColor}
-            align="center"
-          >
+          <MjmlText {...textIconProps}>
             💡
           </MjmlText>
         )}
       </MjmlColumn>
-      <MjmlColumn width="80%">
-        <MjmlText
-          fontWeight="600"
-          fontSize="16px"
-          color="#0f172a"
-          paddingBottom="5px"
-        >
+      <MjmlColumn {...columnProps2}>
+        <MjmlText {...titleTextProps}>
           {title}
         </MjmlText>
-        <MjmlText
-          fontSize="14px"
-          color="#334155"
-          lineHeight="1.5"
-        >
+        <MjmlText {...contentTextProps}>
           {content}
         </MjmlText>
       </MjmlColumn>
     </MjmlSection>
   );
 };
-
-// Additional components follow the same pattern...
 
 // Medication Reminder Component
 export interface MedicationReminderProps {
@@ -92,42 +109,47 @@ export const MedicationReminder: React.FC<MedicationReminderProps> = ({
   reminderTime,
   accentColor = '#3b82f6'
 }) => {
+  const sectionProps: MjmlProps = {
+    borderLeft: `4px solid ${accentColor}`,
+    backgroundColor: "#ffffff",
+    paddingTop: "10px",
+    paddingBottom: "10px",
+    paddingLeft: "15px",
+    marginTop: "15px",
+    marginBottom: "15px"
+  };
+
+  const medicationTextProps: MjmlProps = {
+    fontWeight: "600",
+    fontSize: "16px",
+    color: "#0f172a"
+  };
+
+  const reminderTextProps: MjmlProps = {
+    fontSize: "14px",
+    color: "#64748b"
+  };
+
+  const instructionsTextProps: MjmlProps = {
+    fontSize: "14px",
+    color: "#334155",
+    lineHeight: "1.5"
+  };
+
   return (
-    <MjmlSection
-      // @ts-expect-error MJML props not fully typed
-      borderLeft={`4px solid ${accentColor}`}
-      backgroundColor="#ffffff"
-      paddingTop="10px"
-      paddingBottom="10px"
-      paddingLeft="15px"
-      // @ts-expect-error MJML props not fully typed
-      marginTop="15px"
-      // @ts-expect-error MJML props not fully typed
-      marginBottom="15px"
-    >
+    <MjmlSection {...sectionProps}>
       <MjmlColumn>
-        <MjmlText
-          fontWeight="600"
-          fontSize="16px"
-          color="#0f172a"
-        >
+        <MjmlText {...medicationTextProps}>
           {medicationName} - {dosage}
         </MjmlText>
         
         {reminderTime && (
-          <MjmlText
-            fontSize="14px"
-            color="#64748b"
-          >
+          <MjmlText {...reminderTextProps}>
             <span style={{ fontWeight: 600 }}>Reminder:</span> {reminderTime}
           </MjmlText>
         )}
         
-        <MjmlText
-          fontSize="14px"
-          color="#334155"
-          lineHeight="1.5"
-        >
+        <MjmlText {...instructionsTextProps}>
           {instructions}
         </MjmlText>
       </MjmlColumn>
@@ -164,35 +186,42 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
     change.isPositive ? '↑' : '↓'
   ) : '';
   
+  const sectionProps: MjmlProps = {
+    backgroundColor: "#ffffff",
+    borderRadius: "8px",
+    border: "1px solid #e2e8f0",
+    padding: "15px",
+    marginTop: "10px",
+    marginBottom: "10px"
+  };
+
+  const titleTextProps: MjmlProps = {
+    fontWeight: "600",
+    fontSize: "14px",
+    color: "#64748b"
+  };
+
+  const valueTextProps: MjmlProps = {
+    fontWeight: "700",
+    fontSize: "24px",
+    color: "#0f172a",
+    paddingTop: "0"
+  };
+
+  const targetTextProps: MjmlProps = {
+    fontSize: "12px",
+    color: "#64748b",
+    paddingTop: "0"
+  };
+
   return (
-    <MjmlSection
-      backgroundColor="#ffffff"
-      // @ts-expect-error MJML props not fully typed
-      borderRadius="8px"
-      // @ts-expect-error MJML props not fully typed
-      border="1px solid #e2e8f0"
-      // @ts-expect-error MJML props not fully typed
-      padding="15px"
-      // @ts-expect-error MJML props not fully typed
-      marginTop="10px"
-      // @ts-expect-error MJML props not fully typed
-      marginBottom="10px"
-    >
+    <MjmlSection {...sectionProps}>
       <MjmlColumn>
-        <MjmlText
-          fontWeight="600"
-          fontSize="14px"
-          color="#64748b"
-        >
+        <MjmlText {...titleTextProps}>
           {title}
         </MjmlText>
         
-        <MjmlText
-          fontWeight="700"
-          fontSize="24px"
-          color="#0f172a"
-          paddingTop="0"
-        >
+        <MjmlText {...valueTextProps}>
           {value}{unit} 
           {change && (
             <span style={{ fontSize: '16px', color: changeColor, marginLeft: '5px' }}>
@@ -202,11 +231,7 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
         </MjmlText>
         
         {targetRange && (
-          <MjmlText
-            fontSize="12px"
-            color="#64748b"
-            paddingTop="0"
-          >
+          <MjmlText {...targetTextProps}>
             Target range: {targetRange}
           </MjmlText>
         )}
@@ -215,5 +240,4 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
   );
 };
 
-// Export other components to match the original file...
-// (Include the remaining components from your original file here)
+// Export other components here as needed
