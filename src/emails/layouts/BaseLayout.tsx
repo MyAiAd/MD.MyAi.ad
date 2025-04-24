@@ -1,18 +1,9 @@
 // src/emails/layouts/BaseLayout.tsx
 import React from 'react';
-import {
-  Html,
-  Head,
-  Body,
-  Container,
-  Section,
-  Text,
-  Row,
-  Column,
-  Img,
-  Link,
-  Font,
-} from '@react-email/components';
+import { Html } from '@react-email/html';
+import { Section } from '@react-email/section';
+import { Text } from '@react-email/text';
+import { Container } from '@react-email/container';
 
 type BaseLayoutProps = {
   children: React.ReactNode;
@@ -41,27 +32,62 @@ export const BaseLayout: React.FC<BaseLayoutProps> = ({
 }) => {
   return (
     <Html>
-      <Head>
+      <head>
         <title>{title}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="color-scheme" content="light" />
         <meta name="supported-color-schemes" content="light" />
-        <Font
-          Stay healthy,
-        </Text>
+      </head>
+      <body style={{ 
+        margin: '0', 
+        padding: '0', 
+        width: '100%', 
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif' 
+      }}>
+        {viewInBrowserUrl && (
+          <Container style={{ textAlign: 'center', color: '#718096', fontSize: '12px', padding: '10px 0' }}>
+            <a href={viewInBrowserUrl} style={{ color: '#718096', textDecoration: 'underline' }}>
+              View in browser
+            </a>
+          </Container>
+        )}
         
-        <Text
-          style={{
-            fontSize: '16px',
-            color: '#4a5568',
-          }}
-        >
-          The {provider.name} Team
-        </Text>
-      </Section>
-    </BaseLayout>
+        <Container style={{ maxWidth: '600px', margin: '0 auto' }}>
+          <Section style={{ padding: '20px', backgroundColor: '#ffffff' }}>
+            {providerLogo && (
+              <div style={{ marginBottom: '20px' }}>
+                <img src={providerLogo} alt={providerName} style={{ maxHeight: '50px', maxWidth: '200px' }} />
+              </div>
+            )}
+            
+            {children}
+            
+            <Section style={{ borderTop: `1px solid ${accentColor}`, paddingTop: '20px', marginTop: '30px' }}>
+              <Text style={{ fontSize: '14px', color: '#718096', lineHeight: '1.5' }}>
+                {footerText}
+              </Text>
+              
+              {unsubscribeUrl && (
+                <Text style={{ fontSize: '12px', color: '#a0aec0', marginTop: '10px' }}>
+                  <a href={unsubscribeUrl} style={{ color: '#a0aec0', textDecoration: 'underline' }}>
+                    Unsubscribe
+                  </a>
+                  {' or '}
+                  <a href="#update-preferences" style={{ color: '#a0aec0', textDecoration: 'underline' }}>
+                    Update preferences
+                  </a>
+                </Text>
+              )}
+              
+              <Text style={{ fontSize: '12px', color: '#a0aec0', marginTop: '10px' }}>
+                © {new Date().getFullYear()} {providerName}. All rights reserved.
+              </Text>
+            </Section>
+          </Section>
+        </Container>
+      </body>
+    </Html>
   );
 };
 
-export default DiabetesNewsletter;
-
+export default BaseLayout;
