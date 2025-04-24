@@ -1,20 +1,24 @@
 // src/admin/components/fields/ArrayList.tsx
 import React from 'react'; 
-import { BasePropertyProps } from 'adminjs';
+import { BasePropertyProps, PropertyJSON, RecordJSON } from 'adminjs';
 import { Box, Text } from '@adminjs/design-system';
+
+// Define interface for array items
+interface ArrayItem {
+  [key: string]: any;
+}
 
 // Define the props interface for the ArrayList component
 interface ArrayListProps extends BasePropertyProps {
-  property: {
+  property: PropertyJSON & {
     custom?: {
       fields?: Array<{
         name: string;
         label?: string;
       }>;
     };
-    [key: string]: any;
   }; 
-  record: Record<string, any>;
+  record: RecordJSON;
 }
 
 const ArrayList: React.FC<ArrayListProps> = (props) => {
@@ -31,7 +35,7 @@ const ArrayList: React.FC<ArrayListProps> = (props) => {
   
   return (
     <Box>
-      {value.map((item: Record<string, any>, index: number) => (
+      {value.map((item: ArrayItem, index: number) => (
         <Box 
           key={index} 
           mb="sm" 
