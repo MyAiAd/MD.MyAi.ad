@@ -6,6 +6,11 @@ import flat from 'flat';
 
 const { flatten } = flat;
 
+// Define a type for the array items
+interface ArrayItem {
+  [key: string]: any;
+}
+
 // Define the custom property type as an intersection type instead of extending PropertyJSON
 interface ArrayFieldProps extends BasePropertyProps {
   property: PropertyJSON & {
@@ -29,8 +34,8 @@ const ArrayField = (props: ArrayFieldProps) => {
   // Get current value or default to empty array
   const currentValue = record.params[property.path] || [];
   
-  // Initialize items state with current value
-  const [items, setItems] = useState(currentValue);
+  // Initialize items state with current value and the correct type
+  const [items, setItems] = useState<ArrayItem[]>(currentValue);
   
   // Handle adding a new item
   const handleAddItem = () => {
@@ -61,7 +66,7 @@ const ArrayField = (props: ArrayFieldProps) => {
   return (
     <FormGroup>
       <Label>{property.label}</Label>
-      {items.map((item, index) => (
+      {items.map((item: ArrayItem, index: number) => (
         <Box 
           key={index} 
           mb="lg" 
