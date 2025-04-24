@@ -3,7 +3,21 @@ import React, { useState, useEffect } from 'react';
 import { Box, H3, Text, Button, Loader, MessageBox } from '@adminjs/design-system';
 import { useRecord, ApiClient } from 'adminjs';
 
-const PreviewTemplate = (props) => {
+interface PreviewTemplateProps {
+  record: {
+    resource: {
+      id: string;
+    };
+    id: string;
+    params: {
+      name: string;
+      content: string;
+      subject?: string;
+    };
+  };
+}
+
+const PreviewTemplate = (props: PreviewTemplateProps) => {
   const { record: initialRecord } = props;
   const { record, handleChange, submit } = useRecord(
     initialRecord.resource.id,
@@ -14,8 +28,8 @@ const PreviewTemplate = (props) => {
   const [testEmail, setTestEmail] = useState('');
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('preview');
   const api = new ApiClient();
   
@@ -83,7 +97,7 @@ const PreviewTemplate = (props) => {
       } else {
         throw new Error(response.data.message || 'Failed to send test email');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Send test email error:', error);
       setError(error.message || 'Error sending test email');
     } finally {
