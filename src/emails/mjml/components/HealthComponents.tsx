@@ -1,5 +1,5 @@
 // src/emails/mjml/components/HealthComponents.tsx 
-import React from 'react'; 
+import React from 'react';
 import {
   MjmlSection,
   MjmlColumn,
@@ -7,8 +7,8 @@ import {
   MjmlText,
   MjmlDivider,
   MjmlButton,
-  MjmlSpacer 
-} from 'mjml-react'; 
+  MjmlSpacer
+} from 'mjml-react';
 
 // Health Tip Component
 export interface HealthTipProps {
@@ -59,7 +59,7 @@ export const HealthTip: React.FC<HealthTipProps> = ({
       <MjmlColumn width="80%">
         {/* @ts-ignore */}
         <MjmlText
-          fontWeight="600"
+          fontWeight={600}
           fontSize="16px"
           color="#0f172a"
           paddingBottom="5px"
@@ -110,7 +110,7 @@ export const MedicationReminder: React.FC<MedicationReminderProps> = ({
       <MjmlColumn>
         {/* @ts-ignore */}
         <MjmlText
-          fontWeight="600"
+          fontWeight={600}
           fontSize="16px"
           color="#0f172a"
         >
@@ -183,7 +183,7 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
       <MjmlColumn>
         {/* @ts-ignore */}
         <MjmlText
-          fontWeight="600"
+          fontWeight={600}
           fontSize="14px"
           color="#64748b"
         >
@@ -192,7 +192,7 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
         
         {/* @ts-ignore */}
         <MjmlText
-          fontWeight="700"
+          fontWeight={700}
           fontSize="24px"
           color="#0f172a"
           paddingTop="0"
