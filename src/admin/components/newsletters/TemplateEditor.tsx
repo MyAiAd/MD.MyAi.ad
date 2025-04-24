@@ -321,7 +321,8 @@ const TemplateEditor = (props: TemplateEditorProps) => {
           />
         );
       default:
-        return <Text>Unknown block type: {block.type}</Text>;
+        // Use a type assertion to tell TypeScript that we know what we're doing
+        return <Text>Unknown block type: {(block as BaseBlock).type}</Text>;
     }
   };
   
