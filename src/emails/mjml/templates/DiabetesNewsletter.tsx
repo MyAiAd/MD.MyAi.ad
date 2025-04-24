@@ -100,7 +100,7 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
         <>
           {/* @ts-ignore */}
           <MjmlText
-            fontWeight="600"
+            fontWeight={600}
             fontSize="18px"
             color="#0f172a"
           >
@@ -139,7 +139,7 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
         <>
           {/* @ts-ignore */}
           <MjmlText
-            fontWeight="600"
+            fontWeight={600}
             fontSize="18px"
             color="#0f172a"
           >
@@ -183,7 +183,7 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
       {/* Health Tips */}
       {/* @ts-ignore */}
       <MjmlText
-        fontWeight="600"
+        fontWeight={600}
         fontSize="18px"
         color="#0f172a"
       >
@@ -208,7 +208,7 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
       {/* Recommended Articles */}
       {/* @ts-ignore */}
       <MjmlText
-        fontWeight="600"
+        fontWeight={600}
         fontSize="18px"
         color="#0f172a"
       >
