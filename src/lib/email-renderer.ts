@@ -1,5 +1,5 @@
 // src/lib/email-renderer.ts
-import { render } from 'mjml-react';
+import { render } from 'mjml-react'; 
 import { PrismaClient } from '@prisma/client';
 import { compile } from 'handlebars';
 import path from 'path';
@@ -15,7 +15,7 @@ import { DiabetesNewsletter } from '@/emails/mjml/templates/DiabetesNewsletter';
 
 // Template types supported by the platform
 export type NewsletterTemplate = 
-  | 'diabetes' 
+  | 'diabetes'  
   | 'general-health';
 
 // Email renderer service
