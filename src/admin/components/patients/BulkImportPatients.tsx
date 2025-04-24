@@ -3,10 +3,16 @@ import React, { useState } from 'react';
 import { Box, H3, Text, Button, DropZone, Loader, MessageBox } from '@adminjs/design-system';
 import { ApiClient } from 'adminjs';
 
+// Define response data type
+interface ResponseData {
+  importedCount?: number;
+  [key: string]: any;
+}
+
 const BulkImportPatients = () => {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{importedCount: number} | null>(null);
+  const [result, setResult] = useState<ResponseData | null>(null);
   const [error, setError] = useState<string | null>(null);
   const api = new ApiClient();
   
@@ -68,7 +74,7 @@ const BulkImportPatients = () => {
       {result && (
         <Box marginBottom="xl">
           <MessageBox
-            message={`Successfully imported ${result.importedCount} patients.`}
+            message={`Successfully imported ${result.importedCount || 0} patients.`}
             variant="success"
           />
         </Box>
