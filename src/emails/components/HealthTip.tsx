@@ -1,6 +1,8 @@
 // src/emails/components/HealthTip.tsx
 import React from 'react';
-import { Section, Text, Box } from '@react-email/components';
+import { Section } from '@react-email/section';
+import { Text } from '@react-email/text';
+import { Container } from '@react-email/container';
 
 type HealthTipProps = {
   title: string;
@@ -19,7 +21,7 @@ export const HealthTip: React.FC<HealthTipProps> = ({
 }) => {
   return (
     <Section style={{ marginBottom: '20px' }}>
-      <Box
+      <Container
         style={{
           backgroundColor,
           borderRadius: '4px',
@@ -47,10 +49,9 @@ export const HealthTip: React.FC<HealthTipProps> = ({
         >
           {content}
         </Text>
-      </Box>
+      </Container>
     </Section>
   );
 };
 
 export default HealthTip;
-
