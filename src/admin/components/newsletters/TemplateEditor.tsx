@@ -5,6 +5,21 @@ import { flat } from 'adminjs';
 
 const { flatten } = flat;
 
+// Helper function to get nested property values
+const getPropertyValue = (obj: any, path: string) => {
+  if (!obj) return undefined;
+  
+  const keys = path.split('.');
+  let result = obj;
+  
+  for (const key of keys) {
+    if (result === undefined || result === null) return undefined;
+    result = result[key];
+  }
+  
+  return result;
+};
+
 // Define interfaces for the content blocks
 interface BaseBlock {
   id: string;
@@ -119,7 +134,7 @@ const TemplateEditor = (props: TemplateEditorProps) => {
   
   // Get template content from record or initialize
   const propertyPath = `params.${property.path}`;
-  const initialContent = flatten.get(record?.params, property.path) || [];
+  const initialContent = getPropertyValue(record, property.path) || [];
   
   const [content, setContent] = useState<ContentBlock[]>(initialContent);
   const [activeTab, setActiveTab] = useState('blocks');
@@ -146,7 +161,7 @@ const TemplateEditor = (props: TemplateEditorProps) => {
         },
         body: JSON.stringify({
           content,
-          subject: flatten.get(record?.params, 'subject') || 'Newsletter Preview',
+          subject: getPropertyValue(record, 'subject') || 'Newsletter Preview',
         }),
       });
       
