@@ -1,5 +1,4 @@
 // src/emails/mjml/components/HealthComponents.tsx 
-// added as test
 import React from 'react';
 import {
   MjmlSection,
@@ -31,9 +30,7 @@ export const HealthTip: React.FC<HealthTipProps> = ({
       borderRadius="8px"
       paddingTop="10px"
       paddingBottom="10px"
-      // @ts-ignore marginTop is not recognized in type definition
       marginTop="10px"
-      // @ts-ignore marginBottom is not recognized in type definition
       marginBottom="10px"
     >
       <MjmlColumn width="20%" verticalAlign="middle">
@@ -93,15 +90,12 @@ export const MedicationReminder: React.FC<MedicationReminderProps> = ({
 }) => {
   return (
     <MjmlSection
-      // @ts-ignore borderLeft is not recognized in type definition
       borderLeft={`4px solid ${accentColor}`}
       backgroundColor="#ffffff"
       paddingTop="10px"
       paddingBottom="10px"
       paddingLeft="15px"
-      // @ts-ignore marginTop is not recognized in type definition
       marginTop="15px"
-      // @ts-ignore marginBottom is not recognized in type definition
       marginBottom="15px"
     >
       <MjmlColumn>
@@ -166,15 +160,10 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
   return (
     <MjmlSection
       backgroundColor="#ffffff"
-      // @ts-ignore borderRadius is not recognized in type definition
       borderRadius="8px"
-      // @ts-ignore border is not recognized in type definition
       border="1px solid #e2e8f0"
-      // @ts-ignore padding is not recognized in type definition
       padding="15px"
-      // @ts-ignore marginTop is not recognized in type definition
       marginTop="10px"
-      // @ts-ignore marginBottom is not recognized in type definition
       marginBottom="10px"
     >
       <MjmlColumn>
@@ -239,13 +228,9 @@ export const AppointmentReminder: React.FC<AppointmentReminderProps> = ({
   return (
     <MjmlSection
       backgroundColor="#f8fafc"
-      // @ts-ignore borderRadius is not recognized in type definition
       borderRadius="8px"
-      // @ts-ignore padding is not recognized in type definition
       padding="15px"
-      // @ts-ignore marginTop is not recognized in type definition
       marginTop="15px"
-      // @ts-ignore marginBottom is not recognized in type definition
       marginBottom="15px"
     >
       <MjmlColumn>
@@ -291,7 +276,6 @@ export const AppointmentReminder: React.FC<AppointmentReminderProps> = ({
           <MjmlButton
             backgroundColor={accentColor}
             color="white"
-            // @ts-ignore borderRadius is not recognized in type definition
             borderRadius="4px"
             href={appointmentUrl}
             paddingTop="10px"
@@ -324,17 +308,13 @@ export const HealthArticle: React.FC<HealthArticleProps> = ({
   return (
     <>
       <MjmlDivider borderWidth="1px" borderColor="#e2e8f0" padding="10px 0" />
-      <MjmlSection 
-        // @ts-ignore padding is not recognized in type definition
-        padding="0"
-      >
+      <MjmlSection padding="0">
         {imageUrl && (
           <MjmlColumn width="30%" verticalAlign="top">
             <MjmlImage
               src={imageUrl}
               alt={title}
               width="100%"
-              // @ts-ignore borderRadius is not recognized in type definition
               borderRadius="8px"
             />
           </MjmlColumn>
@@ -359,9 +339,7 @@ export const HealthArticle: React.FC<HealthArticleProps> = ({
           <MjmlButton
             backgroundColor="transparent"
             color={accentColor}
-            // @ts-ignore border is not recognized in type definition
             border={`1px solid ${accentColor}`}
-            // @ts-ignore borderRadius is not recognized in type definition
             borderRadius="4px"
             href={articleUrl}
             width="120px"
