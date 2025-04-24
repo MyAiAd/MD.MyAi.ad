@@ -3,7 +3,7 @@ import React from 'react';
 
 declare global {
   namespace JSX {
-    interface IntrinsicElements {
+    interface IntrinsicElements { 
       'mj-section': any;
       'mj-column': any;
       'mj-text': any;
