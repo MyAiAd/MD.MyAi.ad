@@ -1,6 +1,8 @@
 // src/emails/components/HealthMetric.tsx
 import React from 'react';
-import { Section, Text, Box } from '@react-email/components';
+import { Section } from '@react-email/section';
+import { Text } from '@react-email/text';
+import { Container } from '@react-email/container';
 
 type HealthMetricProps = {
   title: string;
@@ -22,7 +24,7 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
 
   return (
     <Section style={{ marginBottom: '15px' }}>
-      <Box
+      <Container
         style={{
           backgroundColor: '#ffffff',
           borderRadius: '4px',
@@ -73,10 +75,9 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
             {interpretation}
           </Text>
         )}
-      </Box>
+      </Container>
     </Section>
   );
 };
 
 export default HealthMetric;
-
