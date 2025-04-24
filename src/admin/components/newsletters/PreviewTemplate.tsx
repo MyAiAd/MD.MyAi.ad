@@ -1,31 +1,19 @@
 // src/admin/components/newsletters/PreviewTemplate.tsx
 import React, { useState, useEffect } from 'react';
 import { Box, H3, Text, Button, Loader, MessageBox } from '@adminjs/design-system';
-import { useRecord, ApiClient } from 'adminjs';
+import { useRecord, ApiClient, RecordJSON } from 'adminjs';
 
-// Define a custom interface for the record structure as used in your application
-interface NewsletterRecord {
-  id: string;
-  resource: {
-    id: string;
-  };
-  params: {
-    name: string;
-    content: string;
-    subject?: string;
-  };
+// Define a custom interface that extends RecordJSON for the newsletter
+interface NewsletterRecordProps {
+  record: RecordJSON;
 }
 
-interface PreviewTemplateProps {
-  record: NewsletterRecord;
-}
-
-const PreviewTemplate = (props: PreviewTemplateProps) => {
+const PreviewTemplate = (props: NewsletterRecordProps) => {
   const { record: initialRecord } = props;
-  const { record, handleChange, submit } = useRecord(
-    initialRecord.resource.id,
-    initialRecord.id
-  );
+  
+  // The useRecord hook should use resourceId and recordId 
+  // rather than resourceId and id directly
+  const { record, handleChange, submit } = useRecord(initialRecord);
   
   const [previewHtml, setPreviewHtml] = useState('');
   const [testEmail, setTestEmail] = useState('');
@@ -86,7 +74,7 @@ const PreviewTemplate = (props: PreviewTemplateProps) => {
       
       // Call API to send test email - fixed API call for AdminJS v7
       const response = await api.resourceAction({
-        resourceId: initialRecord.resource.id,
+        resourceId: initialRecord.resourceId,
         actionName: 'sendTest',
         // Use the record ID as part of the data payload instead
         data: {
