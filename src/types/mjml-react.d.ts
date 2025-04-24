@@ -1,7 +1,7 @@
 // src/types/mjml-react.d.ts
 import React from 'react';
 
-declare module 'mjml-react' {
+declare module 'mjml-react' { 
   // Generic prop interfaces
   export interface BorderProps {
     border?: string;

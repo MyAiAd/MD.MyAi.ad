@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   MjmlSection,
-  MjmlColumn,
+  MjmlColumn, 
   MjmlImage,
   MjmlText,
   MjmlDivider,
