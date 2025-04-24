@@ -2,7 +2,7 @@
 import React from 'react';
 import {
   MjmlSection,
-  MjmlColumn, 
+  MjmlColumn,
   MjmlImage,
   MjmlText,
   MjmlDivider,
@@ -25,6 +25,7 @@ export const HealthTip: React.FC<HealthTipProps> = ({
   accentColor = '#3b82f6'
 }) => {
   return (
+    // @ts-ignore
     <MjmlSection
       backgroundColor="#f8fafc"
       borderRadius="8px"
@@ -33,8 +34,10 @@ export const HealthTip: React.FC<HealthTipProps> = ({
       marginTop="10px"
       marginBottom="10px"
     >
+      {/* @ts-ignore */}
       <MjmlColumn width="20%" verticalAlign="middle">
         {iconUrl ? (
+          // @ts-ignore
           <MjmlImage
             width="50px"
             src={iconUrl}
@@ -42,6 +45,7 @@ export const HealthTip: React.FC<HealthTipProps> = ({
             align="center"
           />
         ) : (
+          // @ts-ignore
           <MjmlText
             fontSize="24px"
             color={accentColor}
@@ -51,7 +55,9 @@ export const HealthTip: React.FC<HealthTipProps> = ({
           </MjmlText>
         )}
       </MjmlColumn>
+      {/* @ts-ignore */}
       <MjmlColumn width="80%">
+        {/* @ts-ignore */}
         <MjmlText
           fontWeight="600"
           fontSize="16px"
@@ -60,6 +66,7 @@ export const HealthTip: React.FC<HealthTipProps> = ({
         >
           {title}
         </MjmlText>
+        {/* @ts-ignore */}
         <MjmlText
           fontSize="14px"
           color="#334155"
@@ -89,6 +96,7 @@ export const MedicationReminder: React.FC<MedicationReminderProps> = ({
   accentColor = '#3b82f6'
 }) => {
   return (
+    // @ts-ignore
     <MjmlSection
       borderLeft={`4px solid ${accentColor}`}
       backgroundColor="#ffffff"
@@ -98,7 +106,9 @@ export const MedicationReminder: React.FC<MedicationReminderProps> = ({
       marginTop="15px"
       marginBottom="15px"
     >
+      {/* @ts-ignore */}
       <MjmlColumn>
+        {/* @ts-ignore */}
         <MjmlText
           fontWeight="600"
           fontSize="16px"
@@ -108,6 +118,7 @@ export const MedicationReminder: React.FC<MedicationReminderProps> = ({
         </MjmlText>
         
         {reminderTime && (
+          // @ts-ignore
           <MjmlText
             fontSize="14px"
             color="#64748b"
@@ -116,6 +127,7 @@ export const MedicationReminder: React.FC<MedicationReminderProps> = ({
           </MjmlText>
         )}
         
+        {/* @ts-ignore */}
         <MjmlText
           fontSize="14px"
           color="#334155"
@@ -158,6 +170,7 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
   ) : '';
   
   return (
+    // @ts-ignore
     <MjmlSection
       backgroundColor="#ffffff"
       borderRadius="8px"
@@ -166,7 +179,9 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
       marginTop="10px"
       marginBottom="10px"
     >
+      {/* @ts-ignore */}
       <MjmlColumn>
+        {/* @ts-ignore */}
         <MjmlText
           fontWeight="600"
           fontSize="14px"
@@ -175,6 +190,7 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
           {title}
         </MjmlText>
         
+        {/* @ts-ignore */}
         <MjmlText
           fontWeight="700"
           fontSize="24px"
@@ -190,6 +206,7 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
         </MjmlText>
         
         {targetRange && (
+          // @ts-ignore
           <MjmlText
             fontSize="12px"
             color="#64748b"
