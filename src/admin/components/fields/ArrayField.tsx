@@ -1,24 +1,26 @@
 // src/admin/components/fields/ArrayField.tsx
 import React, { useState } from 'react';
 import { Box, Button, FormGroup, FormMessage, Icon, Label } from '@adminjs/design-system';
-import { BasePropertyProps } from 'adminjs';
+import { BasePropertyProps, PropertyJSON } from 'adminjs';
 import flat from 'flat';
 
 const { flatten } = flat;
 
-// Define props interface for ArrayField
-interface ArrayFieldProps extends BasePropertyProps {
-  property: {
-    custom?: {
-      addLabel?: string;
-      fields?: Array<{
-        name: string;
-        label?: string;
-        type?: string;
-      }>;
-    }; 
-    [key: string]: any;
+// Define custom property interface that extends PropertyJSON
+interface ArrayPropertyJSON extends PropertyJSON {
+  custom?: {
+    addLabel?: string;
+    fields?: Array<{
+      name: string;
+      label?: string;
+      type?: string;
+    }>;
   };
+}
+
+// Update the ArrayFieldProps interface to use PropertyJSON correctly
+interface ArrayFieldProps extends BasePropertyProps {
+  property: ArrayPropertyJSON;
   onChange: (value: any) => void;
   record: Record<string, any>;
 }
