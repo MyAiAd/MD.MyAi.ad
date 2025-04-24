@@ -19,7 +19,7 @@ const BulkImportPatients = () => {
   const handleDropZoneChange = (files: File[]) => {
     if (files && files.length > 0) {
       setFile(files[0]); 
-      setResult(null);
+      setResult(null); 
       setError(null);
     }
   };
