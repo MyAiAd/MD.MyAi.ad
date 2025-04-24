@@ -1,7 +1,7 @@
 // src/admin/components/fields/ArrayField.tsx
 import React, { useState } from 'react';
 import { Box, Button, FormGroup, FormMessage, Icon, Label } from '@adminjs/design-system';
-import { BasePropertyProps, PropertyJSON } from 'adminjs';
+import { BasePropertyProps, PropertyJSON, RecordJSON } from 'adminjs';
 import flat from 'flat';
 
 const { flatten } = flat;
@@ -19,7 +19,7 @@ interface ArrayFieldProps extends BasePropertyProps {
     };
   };
   onChange: (value: any) => void;
-  record: Record<string, any>;
+  record: RecordJSON;
 }
 
 const ArrayField = (props: ArrayFieldProps) => {
