@@ -75,6 +75,7 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
     >
       {/* Personalized Greeting */}
       {/* @ts-ignore */}
+      {/* @ts-ignore */}
       <MjmlText
         fontSize="16px"
         color="#334155"
@@ -83,6 +84,7 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
         Hello {patientName},
       </MjmlText>
       
+      {/* @ts-ignore */}
       {/* @ts-ignore */}
       <MjmlText
         fontSize="16px"
@@ -93,13 +95,15 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
       </MjmlText>
       
       {/* @ts-ignore */}
+      {/* @ts-ignore */}
       <MjmlSpacer height="20px" />
       
       {/* Health Metrics Section */}
       {(bloodGlucose || a1c) && (
         <>
           {/* @ts-ignore */}
-          <MjmlText
+          {/* @ts-ignore */}
+      <MjmlText
             fontWeight={600}
             fontSize="18px"
             color="#0f172a"
@@ -130,7 +134,8 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
           )}
           
           {/* @ts-ignore */}
-          <MjmlSpacer height="20px" />
+          {/* @ts-ignore */}
+      <MjmlSpacer height="20px" />
         </>
       )}
       
@@ -138,7 +143,8 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
       {medications.length > 0 && (
         <>
           {/* @ts-ignore */}
-          <MjmlText
+          {/* @ts-ignore */}
+      <MjmlText
             fontWeight={600}
             fontSize="18px"
             color="#0f172a"
@@ -158,7 +164,8 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
           ))}
           
           {/* @ts-ignore */}
-          <MjmlSpacer height="20px" />
+          {/* @ts-ignore */}
+      <MjmlSpacer height="20px" />
         </>
       )}
       
@@ -176,11 +183,13 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
           />
           
           {/* @ts-ignore */}
-          <MjmlSpacer height="20px" />
+          {/* @ts-ignore */}
+      <MjmlSpacer height="20px" />
         </>
       )}
       
       {/* Health Tips */}
+      {/* @ts-ignore */}
       {/* @ts-ignore */}
       <MjmlText
         fontWeight={600}
@@ -203,9 +212,11 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
       />
       
       {/* @ts-ignore */}
+      {/* @ts-ignore */}
       <MjmlSpacer height="20px" />
       
       {/* Recommended Articles */}
+      {/* @ts-ignore */}
       {/* @ts-ignore */}
       <MjmlText
         fontWeight={600}
@@ -230,9 +241,11 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
       />
       
       {/* @ts-ignore */}
+      {/* @ts-ignore */}
       <MjmlSpacer height="20px" />
       
       {/* Closing */}
+      {/* @ts-ignore */}
       {/* @ts-ignore */}
       <MjmlText
         fontSize="16px"
@@ -242,6 +255,7 @@ export const DiabetesNewsletter: React.FC<DiabetesNewsletterProps> = ({
         We're here to support your health journey. If you have any questions about this information, please contact our office.
       </MjmlText>
       
+      {/* @ts-ignore */}
       {/* @ts-ignore */}
       <MjmlText
         fontSize="16px"
