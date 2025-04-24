@@ -1,33 +1,58 @@
 // src/admin/components/fields/ArrayList.tsx
 import React from 'react';
-import { Box, Label, Badge } from '@adminjs/design-system';
-import { flat } from 'adminjs';
+import { BasePropertyProps } from 'adminjs';
+import { Box, Text } from '@adminjs/design-system';
 
-const { flatten } = flat;
+// Define the props interface for the ArrayList component
+interface ArrayListProps extends BasePropertyProps {
+  property: {
+    custom?: {
+      fields?: Array<{
+        name: string;
+        label?: string;
+      }>;
+    };
+    [key: string]: any;
+  };
+  record: Record<string, any>;
+}
 
-const ArrayList = (props) => {
+const ArrayList: React.FC<ArrayListProps> = (props) => {
   const { property, record } = props;
+  const { custom } = property;
   
-  // Get array from record
-  const values = flatten.get(record?.params, property.path) || [];
+  // Get the array value from the record
+  const value = record.params[property.path] || [];
+  
+  // If there are no items, show a placeholder message
+  if (!value.length) {
+    return <Text>No items</Text>;
+  }
   
   return (
     <Box>
-      <Label>{property.label}</Label>
-      
-      <Box>
-        {values.length > 0 ? (
-          <Box>
-            {values.map((value, index) => (
-              <Badge key={index} m="2px" variant="info">{value}</Badge>
-            ))}
-          </Box>
-        ) : (
-          <Box>
-            <small>None</small>
-          </Box>
-        )}
-      </Box>
+      {value.map((item: Record<string, any>, index: number) => (
+        <Box 
+          key={index} 
+          mb="sm" 
+          p="sm" 
+          border="1px solid #e0e0e0" 
+          borderRadius="4px"
+        >
+          {custom?.fields ? (
+            // If we have defined fields, display them in a structured format
+            custom.fields.map((field) => (
+              <Box key={field.name} mb="xs">
+                <Text fontWeight="bold">{field.label || field.name}:</Text>
+                <Text>{item[field.name] || '-'}</Text>
+              </Box>
+            ))
+          ) : (
+            // If no fields defined, just show a simple representation
+            <pre>{JSON.stringify(item, null, 2)}</pre>
+          )}
+        </Box>
+      ))}
     </Box>
   );
 };

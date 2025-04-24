@@ -1,96 +1,112 @@
 // src/admin/components/fields/ArrayField.tsx
-import React, { useState, useEffect } from 'react';
-import { Box, Button, Icon, Input, Label } from '@adminjs/design-system';
-import { flat } from 'adminjs';
+import React, { useState } from 'react';
+import { Box, Button, FormGroup, FormMessage, Icon, Label } from '@adminjs/design-system';
+import { BasePropertyProps } from 'adminjs';
+import flat from 'flat';
 
 const { flatten } = flat;
 
-const ArrayField = (props) => {
+// Define props interface for ArrayField
+interface ArrayFieldProps extends BasePropertyProps {
+  property: {
+    custom?: {
+      addLabel?: string;
+      fields?: Array<{
+        name: string;
+        label?: string;
+        type?: string;
+      }>;
+    };
+    [key: string]: any;
+  };
+  onChange: (value: any) => void;
+  record: Record<string, any>;
+}
+
+const ArrayField = (props: ArrayFieldProps) => {
   const { property, onChange, record } = props;
   const { custom } = property;
   
-  // Get array from record or initialize empty
-  const propertyPath = `params.${property.path}`;
-  const values = flatten.get(record?.params, property.path) || [];
+  // Get current value or default to empty array
+  const currentValue = record.params[property.path] || [];
   
-  const [items, setItems] = useState(values);
-  const [newItem, setNewItem] = useState('');
+  // Initialize items state with current value
+  const [items, setItems] = useState(currentValue);
   
-  useEffect(() => {
-    onChange(propertyPath, items);
-  }, [items]);
-  
-  const handleAdd = () => {
-    if (newItem.trim() !== '') {
-      const updatedItems = [...items, newItem.trim()];
-      setItems(updatedItems);
-      setNewItem('');
-    }
+  // Handle adding a new item
+  const handleAddItem = () => {
+    const newItems = [...items, {}];
+    setItems(newItems);
+    onChange(newItems);
   };
   
-  const handleRemove = (index) => {
-    const updatedItems = [...items];
-    updatedItems.splice(index, 1);
-    setItems(updatedItems);
+  // Handle removing an item
+  const handleRemoveItem = (index: number) => {
+    const newItems = [...items];
+    newItems.splice(index, 1);
+    setItems(newItems);
+    onChange(newItems);
   };
   
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleAdd();
+  // Handle changing a field in an item
+  const handleItemFieldChange = (itemIndex: number, fieldName: string, value: any) => {
+    const newItems = [...items];
+    if (!newItems[itemIndex]) {
+      newItems[itemIndex] = {};
     }
+    newItems[itemIndex][fieldName] = value;
+    setItems(newItems);
+    onChange(newItems);
   };
   
   return (
-    <Box>
+    <FormGroup>
       <Label>{property.label}</Label>
-      
-      {/* List of current items */}
-      <Box mb="lg">
-        {items.length > 0 ? (
-          items.map((item, index) => (
-            <Box key={index} flex flexDirection="row" alignItems="center" mb="sm">
-              <Box flex="1">
-                <Input type="text" value={item} disabled />
-              </Box>
-              <Box ml="sm">
-                <Button size="icon" rounded variant="danger" onClick={() => handleRemove(index)}>
-                  <Icon icon="Trash" />
-                </Button>
-              </Box>
-            </Box>
-          ))
-        ) : (
-          <Box mb="lg">
-            <small>No items added yet.</small>
+      {items.map((item, index) => (
+        <Box 
+          key={index} 
+          mb="lg" 
+          p="md" 
+          border="1px solid #e0e0e0" 
+          borderRadius="4px"
+        >
+          <Box display="flex" justifyContent="flex-end">
+            <Button 
+              variant="text" 
+              size="icon" 
+              onClick={() => handleRemoveItem(index)}
+            >
+              <Icon icon="Trash" />
+            </Button>
           </Box>
-        )}
-      </Box>
+          
+          {custom?.fields?.map((field) => (
+            <FormGroup key={field.name}>
+              <Label>{field.label || field.name}</Label>
+              <input 
+                type={field.type || 'text'} 
+                value={item[field.name] || ''} 
+                onChange={(e) => handleItemFieldChange(index, field.name, e.target.value)} 
+                className="input-style" // Apply your styling here
+              />
+            </FormGroup>
+          ))}
+        </Box>
+      ))}
       
-      {/* Add new item */}
-      <Box flex flexDirection="row" alignItems="center">
-        <Box flex="1">
-          <Input
-            type="text"
-            value={newItem}
-            onChange={(e) => setNewItem(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder={`Add new ${property.label.toLowerCase()}`}
-          />
-        </Box>
-        <Box ml="sm">
-          <Button size="sm" onClick={handleAdd}>Add</Button>
-        </Box>
-      </Box>
+      <Button 
+        onClick={handleAddItem} 
+        mt="md"
+      >
+        <Icon icon="Add" />
+        {custom?.addLabel || 'Add Item'}
+      </Button>
       
       {property.description && (
-        <Box mt="sm">
-          <small>{property.description}</small>
-        </Box>
+        <FormMessage>{property.description}</FormMessage>
       )}
-    </Box>
+    </FormGroup>
   );
 };
 
 export default ArrayField;
-
