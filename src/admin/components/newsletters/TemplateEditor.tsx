@@ -1,5 +1,5 @@
 // src/admin/components/newsletters/TemplateEditor.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import { Box, Button, Text, TextArea, Input, FormGroup, Label, Tabs } from '@adminjs/design-system';
 import { flat } from 'adminjs';
 
@@ -444,7 +444,7 @@ const TemplateEditor = (props: TemplateEditorProps) => {
                         <Input
                           type="text"
                           value={block.conditions.join(', ')}
-                          onChange={(e) => {
+                          onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             const updatedBlock = { ...block };
                             updatedBlock.conditions = e.target.value.split(',').map(c => c.trim()).filter(Boolean);
                             updateBlockContent(index, updatedBlock);
@@ -458,7 +458,7 @@ const TemplateEditor = (props: TemplateEditorProps) => {
                         <Input
                           type="text"
                           value={block.medications.join(', ')}
-                          onChange={(e) => {
+                          onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             const updatedBlock = { ...block };
                             updatedBlock.medications = e.target.value.split(',').map(m => m.trim()).filter(Boolean);
                             updateBlockContent(index, updatedBlock);
@@ -472,7 +472,7 @@ const TemplateEditor = (props: TemplateEditorProps) => {
                         <Input
                           type="text"
                           value={block.dietary.join(', ')}
-                          onChange={(e) => {
+                          onChange={(e: ChangeEvent<HTMLInputElement>) => {
                             const updatedBlock = { ...block };
                             updatedBlock.dietary = e.target.value.split(',').map(d => d.trim()).filter(Boolean);
                             updateBlockContent(index, updatedBlock);
@@ -531,7 +531,7 @@ const TemplateEditor = (props: TemplateEditorProps) => {
 
 // Block editor components
 const TextEditor = ({ block, onChange }: TextEditorProps) => {
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     const updatedBlock = {
       ...block,
       content: {
@@ -573,7 +573,7 @@ const ImageEditor = ({ block, onChange }: ImageEditorProps) => {
         <Input
           type="text"
           value={block.content.src || ''}
-          onChange={(e) => handleChange('src', e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('src', e.target.value)}
           placeholder="https://example.com/image.jpg"
         />
       </FormGroup>
@@ -583,7 +583,7 @@ const ImageEditor = ({ block, onChange }: ImageEditorProps) => {
         <Input
           type="text"
           value={block.content.alt || ''}
-          onChange={(e) => handleChange('alt', e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('alt', e.target.value)}
           placeholder="Description of the image"
         />
       </FormGroup>
@@ -593,7 +593,7 @@ const ImageEditor = ({ block, onChange }: ImageEditorProps) => {
         <Input
           type="number"
           value={block.content.width || 600}
-          onChange={(e) => handleChange('width', parseInt(e.target.value))}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('width', parseInt(e.target.value))}
           max={600}
         />
         <Text fontSize="sm" color="grey">Maximum recommended width: 600px</Text>
@@ -621,7 +621,7 @@ const ButtonEditor = ({ block, onChange }: ButtonEditorProps) => {
         <Input
           type="text"
           value={block.content.text || ''}
-          onChange={(e) => handleChange('text', e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('text', e.target.value)}
         />
       </FormGroup>
       
@@ -630,7 +630,7 @@ const ButtonEditor = ({ block, onChange }: ButtonEditorProps) => {
         <Input
           type="text"
           value={block.content.url || '#'}
-          onChange={(e) => handleChange('url', e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('url', e.target.value)}
           placeholder="https://example.com"
         />
       </FormGroup>
@@ -639,7 +639,7 @@ const ButtonEditor = ({ block, onChange }: ButtonEditorProps) => {
         <Label>Alignment</Label>
         <select
           value={block.content.align || 'center'}
-          onChange={(e) => handleChange('align', e.target.value as ButtonBlock['content']['align'])}
+          onChange={(e: ChangeEvent<HTMLSelectElement>) => handleChange('align', e.target.value as ButtonBlock['content']['align'])}
           style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #CBD5E0' }}
         >
           <option value="left">Left</option>
@@ -669,7 +669,7 @@ const DividerEditor = ({ block, onChange }: DividerEditorProps) => {
         <Label>Style</Label>
         <select
           value={block.content.style || 'solid'}
-          onChange={(e) => handleChange('style', e.target.value as DividerBlock['content']['style'])}
+          onChange={(e: ChangeEvent<HTMLSelectElement>) => handleChange('style', e.target.value as DividerBlock['content']['style'])}
           style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #CBD5E0' }}
         >
           <option value="solid">Solid</option>
@@ -683,7 +683,7 @@ const DividerEditor = ({ block, onChange }: DividerEditorProps) => {
         <Input
           type="color"
           value={block.content.color || '#E2E8F0'}
-          onChange={(e) => handleChange('color', e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('color', e.target.value)}
         />
       </FormGroup>
     </Box>
@@ -709,7 +709,7 @@ const SpacerEditor = ({ block, onChange }: SpacerEditorProps) => {
         <Input
           type="number"
           value={block.content.height || 20}
-          onChange={(e) => handleChange(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange(e.target.value)}
           min={5}
           max={100}
         />
@@ -737,7 +737,7 @@ const HealthInfoEditor = ({ block, onChange }: HealthInfoEditorProps) => {
         <Input
           type="text"
           value={block.content.title || ''}
-          onChange={(e) => handleChange('title', e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('title', e.target.value)}
           placeholder="Health Information Title"
         />
       </FormGroup>
@@ -746,7 +746,7 @@ const HealthInfoEditor = ({ block, onChange }: HealthInfoEditorProps) => {
         <Label>Content</Label>
         <TextArea
           value={block.content.text || ''}
-          onChange={(e) => handleChange('text', e.target.value)}
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => handleChange('text', e.target.value)}
           style={{ minHeight: '100px' }}
           placeholder="Health information content..."
         />
@@ -757,7 +757,7 @@ const HealthInfoEditor = ({ block, onChange }: HealthInfoEditorProps) => {
         <Input
           type="text"
           value={block.content.condition || ''}
-          onChange={(e) => handleChange('condition', e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => handleChange('condition', e.target.value)}
           placeholder="E.g. diabetes, hypertension"
         />
         <Text fontSize="sm" color="grey">
