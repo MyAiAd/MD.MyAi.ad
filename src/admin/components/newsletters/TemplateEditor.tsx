@@ -5,20 +5,129 @@ import { flat } from 'adminjs';
 
 const { flatten } = flat;
 
-const TemplateEditor = (props) => {
+// Define interfaces for the content blocks
+interface BaseBlock {
+  id: string;
+  type: string;
+  conditions: string[];
+  medications: string[];
+  dietary: string[];
+}
+
+interface TextBlock extends BaseBlock {
+  type: 'text';
+  content: {
+    text: string;
+  };
+}
+
+interface ImageBlock extends BaseBlock {
+  type: 'image';
+  content: {
+    src: string;
+    alt: string;
+    width: number;
+  };
+}
+
+interface ButtonBlock extends BaseBlock {
+  type: 'button';
+  content: {
+    text: string;
+    url: string;
+    align: 'left' | 'center' | 'right';
+  };
+}
+
+interface DividerBlock extends BaseBlock {
+  type: 'divider';
+  content: {
+    style: 'solid' | 'dashed' | 'dotted';
+    color: string;
+  };
+}
+
+interface SpacerBlock extends BaseBlock {
+  type: 'spacer';
+  content: {
+    height: number;
+  };
+}
+
+interface HealthInfoBlock extends BaseBlock {
+  type: 'health-info';
+  content: {
+    title: string;
+    text: string;
+    condition: string;
+  };
+}
+
+type ContentBlock = TextBlock | ImageBlock | ButtonBlock | DividerBlock | SpacerBlock | HealthInfoBlock;
+
+// Define props interfaces for all components
+interface TemplateEditorProps {
+  property: {
+    path: string;
+    label: string;
+  };
+  onChange: (propertyPath: string, value: any) => void;
+  record: {
+    params: {
+      [key: string]: any;
+    };
+  };
+}
+
+interface BlockEditorProps {
+  block: ContentBlock;
+  onChange: (updatedBlock: ContentBlock) => void;
+}
+
+interface TextEditorProps {
+  block: TextBlock;
+  onChange: (updatedBlock: TextBlock) => void;
+}
+
+interface ImageEditorProps {
+  block: ImageBlock;
+  onChange: (updatedBlock: ImageBlock) => void;
+}
+
+interface ButtonEditorProps {
+  block: ButtonBlock;
+  onChange: (updatedBlock: ButtonBlock) => void;
+}
+
+interface DividerEditorProps {
+  block: DividerBlock;
+  onChange: (updatedBlock: DividerBlock) => void;
+}
+
+interface SpacerEditorProps {
+  block: SpacerBlock;
+  onChange: (updatedBlock: SpacerBlock) => void;
+}
+
+interface HealthInfoEditorProps {
+  block: HealthInfoBlock;
+  onChange: (updatedBlock: HealthInfoBlock) => void;
+}
+
+const TemplateEditor = (props: TemplateEditorProps) => {
   const { property, onChange, record } = props;
   
   // Get template content from record or initialize
   const propertyPath = `params.${property.path}`;
   const initialContent = flatten.get(record?.params, property.path) || [];
   
-  const [content, setContent] = useState(initialContent);
+  const [content, setContent] = useState<ContentBlock[]>(initialContent);
   const [activeTab, setActiveTab] = useState('blocks');
   const [previewHtml, setPreviewHtml] = useState('');
   
   useEffect(() => {
     onChange(propertyPath, content);
-  }, [content]);
+  }, [content, onChange, propertyPath]);
   
   // Generate preview when tab changes
   useEffect(() => {
@@ -53,14 +162,14 @@ const TemplateEditor = (props) => {
     }
   };
   
-  const addContentBlock = (type) => {
-    const newBlock = {
+  const addContentBlock = (type: ContentBlock['type']) => {
+    const newBlock: Partial<ContentBlock> = {
       id: `block-${Date.now()}`,
       type,
-      content: {},
       conditions: [],
       medications: [],
       dietary: [],
+      content: {},
     };
     
     // Add default content based on type
@@ -85,22 +194,22 @@ const TemplateEditor = (props) => {
         break;
     }
     
-    setContent([...content, newBlock]);
+    setContent([...content, newBlock as ContentBlock]);
   };
   
-  const updateBlockContent = (index, updatedBlock) => {
+  const updateBlockContent = (index: number, updatedBlock: ContentBlock) => {
     const newContent = [...content];
     newContent[index] = updatedBlock;
     setContent(newContent);
   };
   
-  const removeBlock = (index) => {
+  const removeBlock = (index: number) => {
     const newContent = [...content];
     newContent.splice(index, 1);
     setContent(newContent);
   };
   
-  const moveBlock = (index, direction) => {
+  const moveBlock = (index: number, direction: 'up' | 'down') => {
     if (
       (direction === 'up' && index === 0) ||
       (direction === 'down' && index === content.length - 1)
@@ -123,7 +232,7 @@ const TemplateEditor = (props) => {
   };
   
   // Render the editor for each block type
-  const renderBlockEditor = (block, index) => {
+  const renderBlockEditor = (block: ContentBlock, index: number) => {
     switch (block.type) {
       case 'text':
         return (
@@ -376,8 +485,8 @@ const TemplateEditor = (props) => {
 };
 
 // Block editor components
-const TextEditor = ({ block, onChange }) => {
-  const handleChange = (e) => {
+const TextEditor = ({ block, onChange }: TextEditorProps) => {
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const updatedBlock = {
       ...block,
       content: {
@@ -400,8 +509,8 @@ const TextEditor = ({ block, onChange }) => {
   );
 };
 
-const ImageEditor = ({ block, onChange }) => {
-  const handleChange = (field, value) => {
+const ImageEditor = ({ block, onChange }: ImageEditorProps) => {
+  const handleChange = (field: keyof ImageBlock['content'], value: string | number) => {
     const updatedBlock = {
       ...block,
       content: {
@@ -448,8 +557,8 @@ const ImageEditor = ({ block, onChange }) => {
   );
 };
 
-const ButtonEditor = ({ block, onChange }) => {
-  const handleChange = (field, value) => {
+const ButtonEditor = ({ block, onChange }: ButtonEditorProps) => {
+  const handleChange = (field: keyof ButtonBlock['content'], value: string) => {
     const updatedBlock = {
       ...block,
       content: {
@@ -485,7 +594,7 @@ const ButtonEditor = ({ block, onChange }) => {
         <Label>Alignment</Label>
         <select
           value={block.content.align || 'center'}
-          onChange={(e) => handleChange('align', e.target.value)}
+          onChange={(e) => handleChange('align', e.target.value as ButtonBlock['content']['align'])}
           style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #CBD5E0' }}
         >
           <option value="left">Left</option>
@@ -497,8 +606,8 @@ const ButtonEditor = ({ block, onChange }) => {
   );
 };
 
-const DividerEditor = ({ block, onChange }) => {
-  const handleChange = (field, value) => {
+const DividerEditor = ({ block, onChange }: DividerEditorProps) => {
+  const handleChange = (field: keyof DividerBlock['content'], value: string) => {
     const updatedBlock = {
       ...block,
       content: {
@@ -515,7 +624,7 @@ const DividerEditor = ({ block, onChange }) => {
         <Label>Style</Label>
         <select
           value={block.content.style || 'solid'}
-          onChange={(e) => handleChange('style', e.target.value)}
+          onChange={(e) => handleChange('style', e.target.value as DividerBlock['content']['style'])}
           style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #CBD5E0' }}
         >
           <option value="solid">Solid</option>
@@ -536,8 +645,8 @@ const DividerEditor = ({ block, onChange }) => {
   );
 };
 
-const SpacerEditor = ({ block, onChange }) => {
-  const handleChange = (height) => {
+const SpacerEditor = ({ block, onChange }: SpacerEditorProps) => {
+  const handleChange = (height: string) => {
     const updatedBlock = {
       ...block,
       content: {
@@ -564,8 +673,8 @@ const SpacerEditor = ({ block, onChange }) => {
   );
 };
 
-const HealthInfoEditor = ({ block, onChange }) => {
-  const handleChange = (field, value) => {
+const HealthInfoEditor = ({ block, onChange }: HealthInfoEditorProps) => {
+  const handleChange = (field: keyof HealthInfoBlock['content'], value: string) => {
     const updatedBlock = {
       ...block,
       content: {
