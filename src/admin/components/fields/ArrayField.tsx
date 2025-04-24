@@ -16,7 +16,7 @@ interface ArrayFieldProps extends BasePropertyProps {
         label?: string;
         type?: string;
       }>;
-    };
+    }; 
     [key: string]: any;
   };
   onChange: (value: any) => void;

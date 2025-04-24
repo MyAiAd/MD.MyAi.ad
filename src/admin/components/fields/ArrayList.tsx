@@ -13,7 +13,7 @@ interface ArrayListProps extends BasePropertyProps {
       }>;
     };
     [key: string]: any;
-  };
+  }; 
   record: Record<string, any>;
 }
 
