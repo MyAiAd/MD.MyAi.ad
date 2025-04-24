@@ -2,11 +2,21 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Text, Loader } from '@adminjs/design-system';
 
-const TemplatePreview = (props) => {
+interface TemplatePreviewProps {
+  record: {
+    params: {
+      content: any;
+      subject?: string;
+      [key: string]: any;
+    };
+  };
+}
+
+const TemplatePreview = (props: TemplatePreviewProps) => {
   const { record } = props;
   const [previewHtml, setPreviewHtml] = useState('');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   
   useEffect(() => {
     if (record && record.params) {
@@ -80,4 +90,3 @@ const TemplatePreview = (props) => {
 };
 
 export default TemplatePreview;
-
