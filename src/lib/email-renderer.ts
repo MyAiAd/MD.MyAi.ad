@@ -3,11 +3,11 @@ import { render } from 'mjml-react';
 import { PrismaClient } from '@prisma/client';
 import { compile } from 'handlebars';
 import path from 'path';
-import fs from 'fs';
+import fs from 'fs'; 
 // Remove Redis import since it's causing issues
 // import Redis from 'ioredis';
 
-import { renderMJMLComponent, renderMJMLMarkup, processTemplate } from './mjml-renderer';
+import { renderMJMLComponent, renderMJMLMarkup, processTemplate }  from './mjml-renderer';
 
 // Import MJML templates instead of React Email templates
 import { DiabetesNewsletter } from '@/emails/mjml/templates/DiabetesNewsletter';
@@ -21,7 +21,7 @@ export type NewsletterTemplate =
 // Email renderer service
 export class EmailRenderer {
   // private redis: Redis | null = null;
-  private prisma: PrismaClient;
+  private prisma: PrismaClient; 
   
   constructor(prisma: PrismaClient, redisUrl?: string) {
     this.prisma = prisma;
@@ -42,7 +42,7 @@ export class EmailRenderer {
     // For other template types, handle accordingly
     // For now, we'll throw an error for unsupported templates
     throw new Error(`Template type "${templateType}" not implemented yet.`);
-  }
+  } 
   
   // Process template with data
   async processTemplate(templateMarkup: string, data: any): Promise<string> {
