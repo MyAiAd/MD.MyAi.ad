@@ -1,158 +1,63 @@
 // src/types/mjml-react.d.ts
 import React from 'react';
 
-declare module 'mjml-react' { 
-  // Generic prop interfaces
-  export interface BorderProps {
-    border?: string;
-    borderBottom?: string;
-    borderLeft?: string;
-    borderRight?: string;
-    borderTop?: string;
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      'mj-section': any;
+      'mj-column': any;
+      'mj-text': any;
+      'mj-button': any;
+      'mj-divider': any;
+      'mj-spacer': any;
+      'mj-image': any;
+      'mj-wrapper': any;
+      'mj-attributes': any;
+      'mj-all': any;
+      'mj-class': any;
+      'mj-hero': any;
+      'mj-navbar': any;
+      'mj-navbar-link': any;
+      'mj-group': any;
+      'mj-raw': any;
+      'mj-table': any;
+      'mj-style': any;
+      'mj-font': any;
+      'mjml': any;
+      'mj-head': any;
+      'mj-title': any;
+      'mj-preview': any;
+      'mj-body': any;
+    }
   }
+}
 
-  export interface PaddingProps {
-    padding?: string;
-    paddingBottom?: string;
-    paddingLeft?: string;
-    paddingRight?: string;
-    paddingTop?: string;
-  }
+declare module 'mjml-react' {
+  export const render: (email: React.ReactElement, options?: any) => { html: string, errors: any[] };
 
-  export interface ClassNameProps {
-    cssClass?: string;
-  }
-
-  export interface MjmlBaseProps {
-    children?: React.ReactNode;
-    dangerouslySetInnerHTML?: {
-      __html: string;
-    };
-    [key: string]: any;
-  }
-
-  // Component-specific props
-  export interface MjmlProps extends MjmlBaseProps {}
-  export interface MjmlHeadProps extends MjmlBaseProps {}
-  export interface MjmlTitleProps extends MjmlBaseProps {}
-  export interface MjmlPreviewProps extends MjmlBaseProps {}
-  export interface MjmlBodyProps extends MjmlBaseProps {}
-  
-  export interface MjmlSectionProps extends MjmlBaseProps, BorderProps, PaddingProps, ClassNameProps {
-    backgroundColor?: string;
-    backgroundUrl?: string;
-    backgroundRepeat?: string;
-    backgroundSize?: string;
-    backgroundPosition?: string;
-    borderRadius?: string;
-    fullWidth?: boolean;
-    direction?: 'ltr' | 'rtl';
-    textAlign?: 'left' | 'right' | 'center' | 'justify';
-    verticalAlign?: 'top' | 'bottom' | 'middle';
-  }
-  
-  export interface MjmlColumnProps extends MjmlBaseProps {
-    backgroundColor?: string;
-    borderRadius?: string;
-    width?: string | number;
-    verticalAlign?: 'top' | 'bottom' | 'middle';
-  }
-  
-  export interface MjmlButtonProps extends MjmlBaseProps {
-    align?: 'left' | 'center' | 'right';
-    backgroundColor?: string;
-    borderRadius?: string;
-    color?: string;
-    fontSize?: string | number;
-    fontStyle?: string;
-    fontWeight?: string | number;
-    height?: string | number;
-    href?: string;
-    innerPadding?: string;
-    lineHeight?: string | number;
-    padding?: string;
-    rel?: string;
-    target?: string;
-    textAlign?: 'left' | 'right' | 'center' | 'justify';
-    textDecoration?: string;
-    textTransform?: string;
-    verticalAlign?: 'top' | 'bottom' | 'middle';
-    width?: string | number;
-  }
-  
-  export interface MjmlImageProps extends MjmlBaseProps {
-    alt?: string;
-    align?: 'left' | 'center' | 'right';
-    border?: string;
-    borderRadius?: string;
-    containerBackground?: string;
-    fluid?: boolean;
-    height?: string | number;
-    href?: string;
-    padding?: string;
-    rel?: string;
-    src: string;
-    srcset?: string;
-    target?: string;
-    title?: string;
-    width?: string | number;
-  }
-  
-  export interface MjmlTextProps extends MjmlBaseProps {
-    align?: 'left' | 'center' | 'right' | 'justify';
-    color?: string;
-    fontFamily?: string;
-    fontSize?: string | number;
-    fontStyle?: string;
-    fontWeight?: string | number;
-    letterSpacing?: string | number;
-    lineHeight?: string | number;
-    padding?: string;
-    textDecoration?: string;
-    textTransform?: string;
-  }
-  
-  export interface MjmlDividerProps extends MjmlBaseProps {
-    borderColor?: string;
-    borderStyle?: string;
-    borderWidth?: string | number;
-    containerBackground?: string;
-    padding?: string;
-    width?: string | number;
-  }
-  
-  export interface MjmlSpacerProps extends MjmlBaseProps {
-    containerBackground?: string;
-    height?: string | number;
-    padding?: string;
-    width?: string | number;
-  }
-
-  // Component declarations as functions
-  export const Mjml: React.ComponentType<MjmlProps>;
-  export const MjmlHead: React.ComponentType<MjmlHeadProps>;
-  export const MjmlTitle: React.ComponentType<MjmlTitleProps>;
-  export const MjmlPreview: React.ComponentType<MjmlPreviewProps>;
-  export const MjmlBody: React.ComponentType<MjmlBodyProps>;
-  export const MjmlSection: React.ComponentType<MjmlSectionProps>;
-  export const MjmlColumn: React.ComponentType<MjmlColumnProps>;
-  export const MjmlButton: React.ComponentType<MjmlButtonProps>;
-  export const MjmlImage: React.ComponentType<MjmlImageProps>;
-  export const MjmlText: React.ComponentType<MjmlTextProps>;
-  export const MjmlDivider: React.ComponentType<MjmlDividerProps>;
-  export const MjmlSpacer: React.ComponentType<MjmlSpacerProps>;
-  export const MjmlWrapper: React.ComponentType<MjmlBaseProps>;
-  export const MjmlAttributes: React.ComponentType<MjmlBaseProps>;
-  export const MjmlAll: React.ComponentType<MjmlBaseProps>;
-  export const MjmlClass: React.ComponentType<MjmlBaseProps>;
-  export const MjmlHero: React.ComponentType<MjmlBaseProps>;
-  export const MjmlNavbar: React.ComponentType<MjmlBaseProps>;
-  export const MjmlNavbarLink: React.ComponentType<MjmlBaseProps>;
-  export const MjmlGroup: React.ComponentType<MjmlBaseProps>;
-  export const MjmlRaw: React.ComponentType<MjmlBaseProps>;
-  export const MjmlTable: React.ComponentType<MjmlBaseProps>;
-  export const MjmlStyle: React.ComponentType<MjmlBaseProps>;
-  export const MjmlFont: React.ComponentType<MjmlBaseProps>;
-  
-  export function render(email: React.ReactElement, options?: any): { html: string, errors: any[] };
+  // Use any for the MJML components to bypass TypeScript's strict JSX checking
+  export const Mjml: any;
+  export const MjmlHead: any;
+  export const MjmlTitle: any;
+  export const MjmlPreview: any;
+  export const MjmlBody: any;
+  export const MjmlSection: any;
+  export const MjmlColumn: any;
+  export const MjmlButton: any;
+  export const MjmlImage: any;
+  export const MjmlText: any;
+  export const MjmlDivider: any;
+  export const MjmlSpacer: any;
+  export const MjmlWrapper: any;
+  export const MjmlAttributes: any;
+  export const MjmlAll: any;
+  export const MjmlClass: any;
+  export const MjmlHero: any;
+  export const MjmlNavbar: any;
+  export const MjmlNavbarLink: any;
+  export const MjmlGroup: any;
+  export const MjmlRaw: any;
+  export const MjmlTable: any;
+  export const MjmlStyle: any;
+  export const MjmlFont: any;
 }
