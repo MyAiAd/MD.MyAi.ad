@@ -1,4 +1,4 @@
-// src/emails/mjml/components/HealthComponents.tsx
+// src/emails/mjml/components/HealthComponents.tsx 
 import React from 'react';
 import {
   MjmlSection,
