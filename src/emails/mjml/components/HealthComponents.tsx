@@ -1,6 +1,5 @@
 // src/emails/mjml/components/HealthComponents.tsx 
 import React from 'react';
-import type { MjmlProps } from 'mjml-react';
 import {
   MjmlSection,
   MjmlColumn,
@@ -9,7 +8,7 @@ import {
   MjmlDivider,
   MjmlButton,
   MjmlSpacer
-} from 'mjml-react'; 
+} from 'mjml-react';
 
 // Health Tip Component
 export interface HealthTipProps {
@@ -25,67 +24,47 @@ export const HealthTip: React.FC<HealthTipProps> = ({
   iconUrl,
   accentColor = '#3b82f6'
 }) => {
-  // Create props objects explicitly to avoid TypeScript errors
-  const sectionProps: MjmlProps = {
-    backgroundColor: "#f8fafc",
-    borderRadius: "8px",
-    paddingTop: "10px",
-    paddingBottom: "10px",
-    marginTop: "10px",
-    marginBottom: "10px"
-  };
-
-  const columnProps1: MjmlProps = {
-    width: "20%",
-    verticalAlign: "middle"
-  };
-
-  const imageProps: MjmlProps = {
-    width: "50px",
-    src: iconUrl,
-    alt: title,
-    align: "center"
-  };
-
-  const textIconProps: MjmlProps = {
-    fontSize: "24px",
-    color: accentColor,
-    align: "center"
-  };
-
-  const columnProps2: MjmlProps = {
-    width: "80%"
-  };
-
-  const titleTextProps: MjmlProps = {
-    fontWeight: "600",
-    fontSize: "16px",
-    color: "#0f172a",
-    paddingBottom: "5px"
-  };
-
-  const contentTextProps: MjmlProps = {
-    fontSize: "14px",
-    color: "#334155",
-    lineHeight: "1.5"
-  };
-
   return (
-    <MjmlSection {...sectionProps}>
-      <MjmlColumn {...columnProps1}>
+    <MjmlSection
+      backgroundColor="#f8fafc"
+      borderRadius="8px"
+      paddingTop="10px"
+      paddingBottom="10px"
+      marginTop="10px"
+      marginBottom="10px"
+    >
+      <MjmlColumn width="20%" verticalAlign="middle">
         {iconUrl ? (
-          <MjmlImage {...imageProps} />
+          <MjmlImage
+            width="50px"
+            src={iconUrl}
+            alt={title}
+            align="center"
+          />
         ) : (
-          <MjmlText {...textIconProps}>
+          <MjmlText
+            fontSize="24px"
+            color={accentColor}
+            align="center"
+          >
             💡
           </MjmlText>
         )}
       </MjmlColumn>
-      <MjmlColumn {...columnProps2}>
-        <MjmlText {...titleTextProps}>
+      <MjmlColumn width="80%">
+        <MjmlText
+          fontWeight="600"
+          fontSize="16px"
+          color="#0f172a"
+          paddingBottom="5px"
+        >
           {title}
         </MjmlText>
-        <MjmlText {...contentTextProps}>
+        <MjmlText
+          fontSize="14px"
+          color="#334155"
+          lineHeight="1.5"
+        >
           {content}
         </MjmlText>
       </MjmlColumn>
@@ -109,47 +88,39 @@ export const MedicationReminder: React.FC<MedicationReminderProps> = ({
   reminderTime,
   accentColor = '#3b82f6'
 }) => {
-  const sectionProps: MjmlProps = {
-    borderLeft: `4px solid ${accentColor}`,
-    backgroundColor: "#ffffff",
-    paddingTop: "10px",
-    paddingBottom: "10px",
-    paddingLeft: "15px",
-    marginTop: "15px",
-    marginBottom: "15px"
-  };
-
-  const medicationTextProps: MjmlProps = {
-    fontWeight: "600",
-    fontSize: "16px",
-    color: "#0f172a"
-  };
-
-  const reminderTextProps: MjmlProps = {
-    fontSize: "14px",
-    color: "#64748b"
-  };
-
-  const instructionsTextProps: MjmlProps = {
-    fontSize: "14px",
-    color: "#334155",
-    lineHeight: "1.5"
-  };
-
   return (
-    <MjmlSection {...sectionProps}>
+    <MjmlSection
+      borderLeft={`4px solid ${accentColor}`}
+      backgroundColor="#ffffff"
+      paddingTop="10px"
+      paddingBottom="10px"
+      paddingLeft="15px"
+      marginTop="15px"
+      marginBottom="15px"
+    >
       <MjmlColumn>
-        <MjmlText {...medicationTextProps}>
+        <MjmlText
+          fontWeight="600"
+          fontSize="16px"
+          color="#0f172a"
+        >
           {medicationName} - {dosage}
         </MjmlText>
         
         {reminderTime && (
-          <MjmlText {...reminderTextProps}>
+          <MjmlText
+            fontSize="14px"
+            color="#64748b"
+          >
             <span style={{ fontWeight: 600 }}>Reminder:</span> {reminderTime}
           </MjmlText>
         )}
         
-        <MjmlText {...instructionsTextProps}>
+        <MjmlText
+          fontSize="14px"
+          color="#334155"
+          lineHeight="1.5"
+        >
           {instructions}
         </MjmlText>
       </MjmlColumn>
@@ -186,42 +157,30 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
     change.isPositive ? '↑' : '↓'
   ) : '';
   
-  const sectionProps: MjmlProps = {
-    backgroundColor: "#ffffff",
-    borderRadius: "8px",
-    border: "1px solid #e2e8f0",
-    padding: "15px",
-    marginTop: "10px",
-    marginBottom: "10px"
-  };
-
-  const titleTextProps: MjmlProps = {
-    fontWeight: "600",
-    fontSize: "14px",
-    color: "#64748b"
-  };
-
-  const valueTextProps: MjmlProps = {
-    fontWeight: "700",
-    fontSize: "24px",
-    color: "#0f172a",
-    paddingTop: "0"
-  };
-
-  const targetTextProps: MjmlProps = {
-    fontSize: "12px",
-    color: "#64748b",
-    paddingTop: "0"
-  };
-
   return (
-    <MjmlSection {...sectionProps}>
+    <MjmlSection
+      backgroundColor="#ffffff"
+      borderRadius="8px"
+      border="1px solid #e2e8f0"
+      padding="15px"
+      marginTop="10px"
+      marginBottom="10px"
+    >
       <MjmlColumn>
-        <MjmlText {...titleTextProps}>
+        <MjmlText
+          fontWeight="600"
+          fontSize="14px"
+          color="#64748b"
+        >
           {title}
         </MjmlText>
         
-        <MjmlText {...valueTextProps}>
+        <MjmlText
+          fontWeight="700"
+          fontSize="24px"
+          color="#0f172a"
+          paddingTop="0"
+        >
           {value}{unit} 
           {change && (
             <span style={{ fontSize: '16px', color: changeColor, marginLeft: '5px' }}>
@@ -231,7 +190,11 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
         </MjmlText>
         
         {targetRange && (
-          <MjmlText {...targetTextProps}>
+          <MjmlText
+            fontSize="12px"
+            color="#64748b"
+            paddingTop="0"
+          >
             Target range: {targetRange}
           </MjmlText>
         )}
@@ -239,5 +202,3 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
     </MjmlSection>
   );
 };
-
-// Export other components here as needed
