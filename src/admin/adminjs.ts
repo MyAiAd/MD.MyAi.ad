@@ -1,4 +1,4 @@
-// src/admin/adminjs.ts - Alternate version with direct model references
+// src/admin/adminjs.ts
 import AdminJS from 'adminjs';
 import { Database, Resource } from '@adminjs/prisma';
 import { PrismaClient } from '@prisma/client';
@@ -105,8 +105,8 @@ const options = {
           icon: 'Newspaper',
         },
         components: {
-          edit: Components.newsletters.TemplateEditor,
-          show: Components.newsletters.TemplatePreview,
+          edit: Components.NewsletterTemplateEditor,
+          show: Components.NewsletterTemplatePreview,
         },
         properties: {
           mjml_template: {
@@ -141,8 +141,8 @@ const options = {
           icon: 'Send',
         },
         components: {
-          show: Components.campaigns.CampaignAnalytics,
-          new: Components.campaigns.SendCampaign,
+          show: Components.CampaignAnalytics,
+          new: Components.SendCampaign,
         },
         properties: {
           provider_id: {
@@ -182,7 +182,7 @@ const options = {
     },
   ],
   dashboard: {
-    component: Components.dashboard.Dashboard,
+    component: Components.Dashboard,
   },
   branding: {
     companyName: 'Healthcare Newsletter Platform',

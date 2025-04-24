@@ -2,9 +2,7 @@
 import React from 'react';
 
 declare module 'mjml-react' {
-  // Redeclare all the MJML components as functional components
-  // This approach bypasses the class component type issues
-  
+  // Simple functional component type
   export interface MjmlProps {
     children?: React.ReactNode;
     [key: string]: any;
