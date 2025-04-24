@@ -178,38 +178,67 @@ const TemplateEditor = (props: TemplateEditorProps) => {
   };
   
   const addContentBlock = (type: ContentBlock['type']) => {
-    const newBlock: Partial<ContentBlock> = {
+    // Create base block with common properties
+    const baseBlock = {
       id: `block-${Date.now()}`,
       type,
       conditions: [],
       medications: [],
       dietary: [],
-      content: {},
     };
     
-    // Add default content based on type
+    let newBlock: ContentBlock;
+    
+    // Add specific content based on type
     switch (type) {
       case 'text':
-        newBlock.content = { text: 'Enter your text here' };
+        newBlock = {
+          ...baseBlock,
+          type: 'text',
+          content: { text: 'Enter your text here' }
+        };
         break;
       case 'image':
-        newBlock.content = { src: '', alt: '', width: 600 };
+        newBlock = {
+          ...baseBlock,
+          type: 'image',
+          content: { src: '', alt: '', width: 600 }
+        };
         break;
       case 'button':
-        newBlock.content = { text: 'Click Me', url: '#', align: 'center' };
+        newBlock = {
+          ...baseBlock,
+          type: 'button',
+          content: { text: 'Click Me', url: '#', align: 'center' }
+        };
         break;
       case 'divider':
-        newBlock.content = { style: 'solid', color: '#E2E8F0' };
+        newBlock = {
+          ...baseBlock,
+          type: 'divider',
+          content: { style: 'solid', color: '#E2E8F0' }
+        };
         break;
       case 'spacer':
-        newBlock.content = { height: 20 };
+        newBlock = {
+          ...baseBlock,
+          type: 'spacer',
+          content: { height: 20 }
+        };
         break;
       case 'health-info':
-        newBlock.content = { title: 'Health Information', text: 'Add health-specific content here', condition: '' };
+        newBlock = {
+          ...baseBlock,
+          type: 'health-info',
+          content: { title: 'Health Information', text: 'Add health-specific content here', condition: '' }
+        };
         break;
+      default:
+        // This should never happen due to TypeScript type safety
+        throw new Error(`Unsupported block type: ${type}`);
     }
     
-    setContent([...content, newBlock as ContentBlock]);
+    setContent([...content, newBlock]);
   };
   
   const updateBlockContent = (index: number, updatedBlock: ContentBlock) => {
