@@ -1,26 +1,16 @@
 // src/admin/components/newsletters/PreviewTemplate.tsx
 import React, { useState, useEffect } from 'react';
 import { Box, H3, Text, Button, Loader, MessageBox } from '@adminjs/design-system';
-import { useRecord, ApiClient } from 'adminjs';
+import { useRecord, ApiClient, RecordJSON } from 'adminjs';
 
 interface PreviewTemplateProps {
-  record: {
-    resource: {
-      id: string;
-    };
-    id: string;
-    params: {
-      name: string;
-      content: string;
-      subject?: string;
-    };
-  };
+  record: RecordJSON;
 }
 
 const PreviewTemplate = (props: PreviewTemplateProps) => {
   const { record: initialRecord } = props;
   const { record, handleChange, submit } = useRecord(
-    initialRecord.resource.id,
+    initialRecord.resourceId,
     initialRecord.id
   );
   
@@ -83,7 +73,7 @@ const PreviewTemplate = (props: PreviewTemplateProps) => {
       
       // Call API to send test email - fixed API call for AdminJS v7
       const response = await api.resourceAction({
-        resourceId: initialRecord.resource.id,
+        resourceId: initialRecord.resourceId,
         actionName: 'sendTest',
         // Use the record ID as part of the data payload instead
         data: {
