@@ -4,7 +4,8 @@ import { PrismaClient } from '@prisma/client';
 import { compile } from 'handlebars';
 import path from 'path';
 import fs from 'fs';
-import Redis from 'ioredis';
+// Remove Redis import since it's causing issues
+// import Redis from 'ioredis';
 
 import { renderMJMLComponent, renderMJMLMarkup, processTemplate } from './mjml-renderer';
 
@@ -19,15 +20,16 @@ export type NewsletterTemplate =
 
 // Email renderer service
 export class EmailRenderer {
-  private redis: Redis | null = null;
+  // private redis: Redis | null = null;
   private prisma: PrismaClient;
   
   constructor(prisma: PrismaClient, redisUrl?: string) {
     this.prisma = prisma;
     
-    if (redisUrl) {
-      this.redis = new Redis(redisUrl);
-    }
+    // Comment out Redis initialization for now
+    // if (redisUrl) {
+    //   this.redis = new Redis(redisUrl);
+    // }
   }
   
   // Render template with data
@@ -49,9 +51,10 @@ export class EmailRenderer {
   
   // Close connections
   async close() {
-    if (this.redis) {
-      await this.redis.quit();
-    }
+    // Comment out Redis close for now
+    // if (this.redis) {
+    //   await this.redis.quit();
+    // }
   }
 }
 
