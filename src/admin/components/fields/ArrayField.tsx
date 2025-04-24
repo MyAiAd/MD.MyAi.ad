@@ -6,21 +6,18 @@ import flat from 'flat';
 
 const { flatten } = flat;
 
-// Define custom property interface that extends PropertyJSON
-interface ArrayPropertyJSON extends PropertyJSON {
-  custom?: {
-    addLabel?: string;
-    fields?: Array<{
-      name: string;
-      label?: string;
-      type?: string;
-    }>;
-  };
-}
-
-// Update the ArrayFieldProps interface to use PropertyJSON correctly
+// Define the custom property type as an intersection type instead of extending PropertyJSON
 interface ArrayFieldProps extends BasePropertyProps {
-  property: ArrayPropertyJSON;
+  property: PropertyJSON & {
+    custom?: {
+      addLabel?: string;
+      fields?: Array<{
+        name: string;
+        label?: string;
+        type?: string;
+      }>;
+    };
+  };
   onChange: (value: any) => void;
   record: Record<string, any>;
 }
