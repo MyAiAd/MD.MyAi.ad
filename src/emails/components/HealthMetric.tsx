@@ -1,6 +1,6 @@
 // src/emails/components/HealthMetric.tsx
 import React from 'react';
-import { Section } from '@react-email/section';
+import { Section } from '@react-email/section'; 
 import { Text } from '@react-email/text';
 import { Container } from '@react-email/container';
 
