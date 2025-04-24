@@ -9,7 +9,7 @@ import {
   MjmlDivider,
   MjmlButton,
   MjmlSpacer
-} from 'mjml-react';
+} from 'mjml-react'; 
 
 // Health Tip Component
 export interface HealthTipProps {
