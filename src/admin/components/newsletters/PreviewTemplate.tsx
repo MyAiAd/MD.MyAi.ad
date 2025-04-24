@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { Box, H3, Text, Button, Loader, MessageBox } from '@adminjs/design-system';
 import { useRecord, ApiClient } from 'adminjs';
 
-// Define a custom interface for the props structure specific to this component
 interface PreviewTemplateProps {
   record: {
     resource: {
@@ -18,14 +17,13 @@ interface PreviewTemplateProps {
   };
 }
 
-const PreviewTemplate: React.FC<PreviewTemplateProps> = (props) => {
+const PreviewTemplate = (props: PreviewTemplateProps) => {
   const { record: initialRecord } = props;
   
-  // Use type assertion to bypass TypeScript type checking for the useRecord hook
-  // @ts-ignore
+  // Use 'any' type casting to bypass the type checking
   const { record, handleChange, submit } = useRecord(
-    initialRecord.resource.id, 
-    initialRecord.id
+    initialRecord.resource.id as any, 
+    initialRecord.id as any
   );
   
   const [previewHtml, setPreviewHtml] = useState('');
