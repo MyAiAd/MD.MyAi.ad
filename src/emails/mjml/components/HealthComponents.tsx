@@ -219,3 +219,171 @@ export const HealthMetric: React.FC<HealthMetricProps> = ({
     </MjmlSection>
   );
 };
+
+// Appointment Reminder Component
+export interface AppointmentReminderProps {
+  doctorName: string;
+  specialty?: string;
+  date: string;
+  time: string;
+  location?: string;
+  appointmentUrl?: string;
+  accentColor?: string;
+}
+
+export const AppointmentReminder: React.FC<AppointmentReminderProps> = ({
+  doctorName,
+  specialty,
+  date,
+  time,
+  location,
+  appointmentUrl,
+  accentColor = '#3b82f6'
+}) => {
+  return (
+    // @ts-ignore
+    <MjmlSection
+      backgroundColor="#ffffff"
+      borderRadius="8px"
+      border={`2px solid ${accentColor}`}
+      padding="15px"
+      marginTop="10px"
+      marginBottom="10px"
+    >
+      {/* @ts-ignore */}
+      <MjmlColumn width="20%" verticalAlign="middle">
+        {/* @ts-ignore */}
+        <MjmlText
+          fontSize="28px"
+          color={accentColor}
+          align="center"
+        >
+          📅
+        </MjmlText>
+      </MjmlColumn>
+      {/* @ts-ignore */}
+      <MjmlColumn width="80%">
+        {/* @ts-ignore */}
+        <MjmlText
+          fontWeight={600}
+          fontSize="16px"
+          color="#0f172a"
+        >
+          Upcoming Appointment
+        </MjmlText>
+        
+        {/* @ts-ignore */}
+        <MjmlText
+          fontSize="14px"
+          color="#334155"
+          lineHeight="1.5"
+          paddingBottom="5px"
+        >
+          Dr. {doctorName}{specialty ? `, ${specialty}` : ''}
+          <br />
+          {date} at {time}
+          {location && (
+            <>
+              <br />
+              Location: {location}
+            </>
+          )}
+        </MjmlText>
+        
+        {appointmentUrl && (
+          // @ts-ignore
+          <MjmlButton
+            backgroundColor={accentColor}
+            color="white"
+            borderRadius="4px"
+            href={appointmentUrl}
+            fontWeight={600}
+            fontSize="14px"
+            innerPadding="8px 16px"
+            align="left"
+          >
+            Manage Appointment
+          </MjmlButton>
+        )}
+      </MjmlColumn>
+    </MjmlSection>
+  );
+};
+
+// Health Article Component
+export interface HealthArticleProps {
+  title: string;
+  summary: string;
+  articleUrl: string;
+  imageUrl?: string;
+  accentColor?: string;
+}
+
+export const HealthArticle: React.FC<HealthArticleProps> = ({
+  title,
+  summary,
+  articleUrl,
+  imageUrl,
+  accentColor = '#3b82f6'
+}) => {
+  return (
+    // @ts-ignore
+    <MjmlSection
+      backgroundColor="#ffffff"
+      borderRadius="8px"
+      padding="15px"
+      marginTop="10px"
+      marginBottom="10px"
+    >
+      {imageUrl && (
+        // @ts-ignore
+        <MjmlColumn width="30%" paddingRight="15px">
+          {/* @ts-ignore */}
+          <MjmlImage
+            width="100%"
+            src={imageUrl}
+            alt={title}
+            borderRadius="4px"
+          />
+        </MjmlColumn>
+      )}
+      {/* @ts-ignore */}
+      <MjmlColumn width={imageUrl ? "70%" : "100%"}>
+        {/* @ts-ignore */}
+        <MjmlText
+          fontWeight={600}
+          fontSize="16px"
+          color="#0f172a"
+          paddingBottom="5px"
+        >
+          {title}
+        </MjmlText>
+        
+        {/* @ts-ignore */}
+        <MjmlText
+          fontSize="14px"
+          color="#334155"
+          lineHeight="1.5"
+          paddingBottom="10px"
+        >
+          {summary}
+        </MjmlText>
+        
+        {/* @ts-ignore */}
+        <MjmlButton
+          backgroundColor="transparent"
+          color={accentColor}
+          borderRadius="4px"
+          border={`1px solid ${accentColor}`}
+          href={articleUrl}
+          fontWeight={600}
+          fontSize="14px"
+          innerPadding="8px 16px"
+          align="left"
+        >
+          Read Article
+        </MjmlButton>
+      </MjmlColumn>
+    </MjmlSection>
+  );
+};
