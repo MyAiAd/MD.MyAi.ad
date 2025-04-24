@@ -10,328 +10,179 @@ import { componentLoader, Components } from './components';
 // Register the PrismaJS adapter
 AdminJS.registerAdapter({ Database, Resource });
 
-// Create Prisma client
+// Create a new PrismaClient instance
 const prisma = new PrismaClient();
 
-// Interface for DMMF
-interface DMMFClass {
-  datamodel: {
-    models: any[];
+// Interface for the request object
+interface AdminRequest {
+  payload?: Record<string, any>;
+  session?: {
+    adminUser?: {
+      id?: string;
+      email?: string;
+      role?: string;
+    }
   };
+  [key: string]: any;
 }
 
-// Export AdminJS configuration function
-export const getAdminJSConfig = async () => {
-  // Get Prisma model metadata
-  const dmmf = ((prisma as any)._baseDmmf as DMMFClass);
-  
-  return {
-    databases: [
-      {
-        database: prisma,
-        models: [
-          'Patient',
-          'NewsletterTemplate',
-          'NewsletterCampaign',
-          'NewsletterAnalytics',
-          'HealthOutcome',
-        ],
-      },
-    ],
-    resources: [
-      {
-        resource: { model: 'Patient', client: prisma },
-        options: {
-          navigation: {
-            name: 'Patient Management',
-            icon: 'User',
+// Define the AdminJS configuration
+const options = {
+  resources: [
+    {
+      resource: { model: prisma.provider, client: prisma },
+      options: {
+        navigation: {
+          name: 'Providers',
+          icon: 'User',
+        },
+        properties: {
+          created_at: {
+            isVisible: { list: true, filter: true, show: true, edit: false },
           },
-          properties: {
-            id: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            created_at: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            provider_id: {
-              isVisible: { list: false, filter: false, show: false, edit: false },
-            },
-            health_conditions: {
-              type: 'string',
-              isArray: true,
-              components: {
-                edit: Components.ArrayField,
-                show: Components.ArrayList,
-              },
-            },
-            medications: {
-              type: 'string',
-              isArray: true,
-              components: {
-                edit: Components.ArrayField,
-                show: Components.ArrayList,
-              },
-            },
-            dietary_restrictions: {
-              type: 'string',
-              isArray: true,
-              components: {
-                edit: Components.ArrayField,
-                show: Components.ArrayList,
-              },
-            },
-          },
-          actions: {
-            new: {
-              before: async (request) => {
-                // Set provider_id based on current user
-                request.payload = {
-                  ...request.payload,
-                  provider_id: request.session.adminUser.id,
-                };
-                return request;
-              },
-            },
-            list: {
-              before: async (request) => {
-                // Filter patients by provider_id
-                request.query = {
-                  ...request.query,
-                  'filters.provider_id': request.session.adminUser.id,
-                };
-                return request;
-              },
-            },
-            bulkImport: {
-              actionType: 'resource',
-              component: Components.BulkImportPatients,
-              icon: 'Upload',
-            },
+          updated_at: {
+            isVisible: { list: true, filter: true, show: true, edit: false },
           },
         },
       },
-      // Rest of the resources configuration remains the same
-      {
-        resource: { model: 'NewsletterTemplate', client: prisma },
-        options: {
-          navigation: {
-            name: 'Newsletter Management',
-            icon: 'FileText',
-          },
-          properties: {
-            id: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            created_at: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            provider_id: {
-              isVisible: { list: false, filter: false, show: false, edit: false },
-            },
-            content: {
-              type: 'mixed',
-              components: {
-                edit: Components.NewsletterTemplateEditor,
-                show: Components.NewsletterTemplatePreview,
-              },
-            },
-            target_conditions: {
-              type: 'string',
-              isArray: true,
-              components: {
-                edit: Components.ArrayField,
-                show: Components.ArrayList,
-              },
-            },
-            target_medications: {
-              type: 'string',
-              isArray: true,
-              components: {
-                edit: Components.ArrayField,
-                show: Components.ArrayList,
-              },
-            },
-            target_dietary: {
-              type: 'string',
-              isArray: true,
-              components: {
-                edit: Components.ArrayField,
-                show: Components.ArrayList,
-              },
-            },
-          },
-          actions: {
-            new: {
-              before: async (request) => {
-                // Set provider_id based on current user
-                request.payload = {
-                  ...request.payload,
-                  provider_id: request.session.adminUser.id,
-                };
-                return request;
-              },
-            },
-            list: {
-              before: async (request) => {
-                // Filter templates by provider_id
-                request.query = {
-                  ...request.query,
-                  'filters.provider_id': request.session.adminUser.id,
-                };
-                return request;
-              },
-            },
-            preview: {
-              actionType: 'record',
-              component: Components.PreviewTemplate,
-              icon: 'Eye',
-            },
-          },
-        },
-      },
-      {
-        resource: { model: 'NewsletterCampaign', client: prisma },
-        options: {
-          navigation: {
-            name: 'Newsletter Management',
-            icon: 'Send',
-          },
-          properties: {
-            id: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            created_at: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            provider_id: {
-              isVisible: { list: false, filter: false, show: false, edit: false },
-            },
-            status: {
-              availableValues: [
-                { value: 'draft', label: 'Draft' },
-                { value: 'scheduled', label: 'Scheduled' },
-                { value: 'sending', label: 'Sending' },
-                { value: 'sent', label: 'Sent' },
-                { value: 'paused', label: 'Paused' },
-              ],
-            },
-          },
-          actions: {
-            new: {
-              before: async (request) => {
-                // Set provider_id based on current user
-                request.payload = {
-                  ...request.payload,
-                  provider_id: request.session.adminUser.id,
-                };
-                return request;
-              },
-            },
-            list: {
-              before: async (request) => {
-                // Filter campaigns by provider_id
-                request.query = {
-                  ...request.query,
-                  'filters.provider_id': request.session.adminUser.id,
-                };
-                return request;
-              },
-            },
-            sendCampaign: {
-              actionType: 'record',
-              component: Components.SendCampaign,
-              icon: 'Send',
-            },
-            viewAnalytics: {
-              actionType: 'record',
-              component: Components.CampaignAnalytics,
-              icon: 'BarChart',
-            },
-          },
-        },
-      },
-      {
-        resource: { model: 'NewsletterAnalytics', client: prisma },
-        options: {
-          navigation: {
-            name: 'Analytics',
-            icon: 'BarChart',
-          },
-          properties: {
-            id: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            created_at: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-          },
-          actions: {
-            list: {
-              before: async (request) => {
-                // Filter analytics by provider_id via campaign
-                // This requires a more complex query
-                return request;
-              },
-            },
-            edit: { isAccessible: false },
-            delete: { isAccessible: false },
-            new: { isAccessible: false },
-          },
-        },
-      },
-      {
-        resource: { model: 'HealthOutcome', client: prisma },
-        options: {
-          navigation: {
-            name: 'Analytics',
-            icon: 'Activity',
-          },
-          properties: {
-            id: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            created_at: {
-              isVisible: { list: true, filter: true, show: true, edit: false },
-            },
-            provider_id: {
-              isVisible: { list: false, filter: false, show: false, edit: false },
-            },
-          },
-          actions: {
-            new: {
-              before: async (request) => {
-                // Set provider_id based on current user
-                request.payload = {
-                  ...request.payload,
-                  provider_id: request.session.adminUser.id,
-                };
-                return request;
-              },
-            },
-            list: {
-              before: async (request) => {
-                // Filter outcomes by provider_id
-                request.query = {
-                  ...request.query,
-                  'filters.provider_id': request.session.adminUser.id,
-                };
-                return request;
-              },
-            },
-          },
-        },
-      },
-    ],
-    rootPath: '/admin',
-    componentLoader,
-    dashboard: {
-      component: Components.Dashboard,
     },
-    branding: {
-      companyName: 'Healthcare Newsletter Platform',
-      logo: '/logo.png',
-      favicon: '/favicon.ico',
-      withMadeWithLove: false,
+    {
+      resource: { model: prisma.patient, client: prisma },
+      options: {
+        navigation: {
+          name: 'Patients',
+          icon: 'User',
+        },
+        properties: {
+          created_at: {
+            isVisible: { list: true, filter: true, show: true, edit: false },
+          },
+          updated_at: {
+            isVisible: { list: true, filter: true, show: true, edit: false },
+          },
+        },
+        actions: {
+          new: {
+            before: async (request: AdminRequest) => {
+              // Set provider_id based on current user
+              request.payload = {
+                ...request.payload,
+                provider_id: request.session?.adminUser?.id,
+              };
+              return request;
+            },
+          },
+          list: {
+            before: async (request: AdminRequest) => {
+              // Filter patients based on provider_id
+              const currentUserId = request.session?.adminUser?.id;
+              const currentUserRole = request.session?.adminUser?.role;
+              
+              if (currentUserRole !== 'admin') {
+                request.query = {
+                  ...request.query,
+                  'filters.provider_id': currentUserId,
+                };
+              }
+              
+              return request;
+            },
+          },
+        },
+      },
     },
-  };
+    {
+      resource: { model: prisma.newsletter, client: prisma },
+      options: {
+        navigation: {
+          name: 'Newsletters',
+          icon: 'Newspaper',
+        },
+        components: {
+          edit: Components.newsletters.TemplateEditor,
+          show: Components.newsletters.TemplatePreview,
+        },
+        properties: {
+          mjml_template: {
+            type: 'textarea',
+            isVisible: { list: false, filter: false, show: true, edit: true },
+          },
+          created_at: {
+            isVisible: { list: true, filter: true, show: true, edit: false },
+          },
+          updated_at: {
+            isVisible: { list: true, filter: true, show: true, edit: false },
+          },
+        },
+        actions: {
+          new: {
+            before: async (request: AdminRequest) => {
+              request.payload = {
+                ...request.payload,
+                provider_id: request.session?.adminUser?.id,
+              };
+              return request;
+            },
+          },
+        },
+      },
+    },
+    {
+      resource: { model: prisma.campaign, client: prisma },
+      options: {
+        navigation: {
+          name: 'Campaigns',
+          icon: 'Send',
+        },
+        components: {
+          show: Components.campaigns.CampaignAnalytics,
+          new: Components.campaigns.SendCampaign,
+        },
+        properties: {
+          provider_id: {
+            isVisible: { list: false, filter: false, show: false, edit: false },
+          },
+          created_at: {
+            isVisible: { list: true, filter: true, show: true, edit: false },
+          },
+        },
+        actions: {
+          new: {
+            before: async (request: AdminRequest) => {
+              request.payload = {
+                ...request.payload,
+                provider_id: request.session?.adminUser?.id,
+              };
+              return request;
+            },
+          },
+          list: {
+            before: async (request: AdminRequest) => {
+              const currentUserId = request.session?.adminUser?.id;
+              const currentUserRole = request.session?.adminUser?.role;
+              
+              if (currentUserRole !== 'admin') {
+                request.query = {
+                  ...request.query,
+                  'filters.provider_id': currentUserId,
+                };
+              }
+              
+              return request;
+            },
+          },
+        },
+      },
+    },
+  ],
+  dashboard: {
+    component: Components.dashboard.Dashboard,
+  },
+  branding: {
+    companyName: 'Healthcare Newsletter Platform',
+    logo: '/images/logo.png',
+    favicon: '/favicon.ico',
+  },
 };
+
+export default options;
