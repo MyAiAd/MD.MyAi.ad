@@ -10,7 +10,7 @@ interface PreviewTemplateProps {
 const PreviewTemplate = (props: PreviewTemplateProps) => {
   const { record: initialRecord } = props;
   const { record, handleChange, submit } = useRecord(
-    initialRecord.resourceId,
+    initialRecord.resource.id,
     initialRecord.id
   );
   
@@ -73,7 +73,7 @@ const PreviewTemplate = (props: PreviewTemplateProps) => {
       
       // Call API to send test email - fixed API call for AdminJS v7
       const response = await api.resourceAction({
-        resourceId: initialRecord.resourceId,
+        resourceId: initialRecord.resource.id,
         actionName: 'sendTest',
         // Use the record ID as part of the data payload instead
         data: {
