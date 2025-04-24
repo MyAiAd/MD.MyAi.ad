@@ -1,5 +1,5 @@
 // src/types/mjml-react.d.ts
-import React from 'react';
+import React from 'react'; 
 
 declare module 'mjml-react' {
   // Simple functional component type

@@ -1,5 +1,5 @@
 // src/emails/mjml/components/HealthComponents.tsx 
-import React from 'react';
+import React from 'react'; 
 import {
   MjmlSection,
   MjmlColumn,
