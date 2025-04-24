@@ -48,7 +48,7 @@ const Dashboard: React.FC = () => {
   
   if (loading) {
     return (
-      <Box 
+      <Box  
         display="flex" 
         justifyContent="center" 
         alignItems="center" 
