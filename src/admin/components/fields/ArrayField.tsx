@@ -51,7 +51,7 @@ const ArrayField = (props: ArrayFieldProps) => {
   // Handle changing a field in an item
   const handleItemFieldChange = (itemIndex: number, fieldName: string, value: any) => {
     const newItems = [...items];
-    if (!newItems[itemIndex]) {
+    if (!newItems[itemIndex]) { 
       newItems[itemIndex] = {};
     }
     newItems[itemIndex][fieldName] = value;

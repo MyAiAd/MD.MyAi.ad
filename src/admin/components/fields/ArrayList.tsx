@@ -1,5 +1,5 @@
 // src/admin/components/fields/ArrayList.tsx
-import React from 'react';
+import React from 'react'; 
 import { BasePropertyProps } from 'adminjs';
 import { Box, Text } from '@adminjs/design-system';
 
