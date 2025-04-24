@@ -4,13 +4,13 @@ import { Box, H3, Text, Button, DropZone, Loader, MessageBox } from '@adminjs/de
 import { ApiClient } from 'adminjs';
 
 const BulkImportPatients = () => {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(null);
+  const [result, setResult] = useState<{importedCount: number} | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const api = new ApiClient();
   
-  const handleDropZoneChange = (files) => {
+  const handleDropZoneChange = (files: File[]) => {
     if (files && files.length > 0) {
       setFile(files[0]);
       setResult(null);
@@ -46,7 +46,7 @@ const BulkImportPatients = () => {
       setResult(response.data);
       setFile(null);
     } catch (e) {
-      setError(e.message || 'An error occurred during the import.');
+      setError((e as Error).message || 'An error occurred during the import.');
     } finally {
       setLoading(false);
     }
