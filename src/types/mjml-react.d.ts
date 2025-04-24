@@ -25,7 +25,7 @@ declare module 'mjml-react' {
   export const MjmlAll: React.FC<MjmlProps>;
   export const MjmlClass: React.FC<MjmlProps>;
   export const MjmlHero: React.FC<MjmlProps>;
-  export const MjmlNavbar: React.FC<MjmlProps>;
+  export const MjmlNavbar: React.FC<MjmlProps>; 
   export const MjmlNavbarLink: React.FC<MjmlProps>;
   export const MjmlGroup: React.FC<MjmlProps>;
   export const MjmlRaw: React.FC<MjmlProps>;
