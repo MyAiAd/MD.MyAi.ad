@@ -1,10 +1,23 @@
 // src/admin/components/newsletters/PreviewTemplate.tsx
 import React, { useState, useEffect } from 'react';
 import { Box, H3, Text, Button, Loader, MessageBox } from '@adminjs/design-system';
-import { useRecord, ApiClient, RecordJSON } from 'adminjs';
+import { useRecord, ApiClient } from 'adminjs';
+
+// Define a custom interface for the record structure as used in your application
+interface NewsletterRecord {
+  id: string;
+  resource: {
+    id: string;
+  };
+  params: {
+    name: string;
+    content: string;
+    subject?: string;
+  };
+}
 
 interface PreviewTemplateProps {
-  record: RecordJSON;
+  record: NewsletterRecord;
 }
 
 const PreviewTemplate = (props: PreviewTemplateProps) => {
