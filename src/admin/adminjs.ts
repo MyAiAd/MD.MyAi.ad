@@ -1,8 +1,7 @@
-// src/admin/adminjs.ts
+// src/admin/adminjs.ts - Alternate version with direct model references
 import AdminJS from 'adminjs';
 import { Database, Resource } from '@adminjs/prisma';
-// Import directly from @prisma/client to avoid module resolution issues
-import { PrismaClient } from '.prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 // Import components with proper path for bundler moduleResolution
 import { componentLoader, Components } from './components';
@@ -23,14 +22,21 @@ interface AdminRequest {
       role?: string;
     }
   };
+  query?: Record<string, any>;
   [key: string]: any;
 }
+
+// Define the resources manually
+const providerResource = { model: 'provider', client: prisma };
+const patientResource = { model: 'patient', client: prisma };
+const newsletterResource = { model: 'newsletter', client: prisma };
+const campaignResource = { model: 'campaign', client: prisma };
 
 // Define the AdminJS configuration
 const options = {
   resources: [
     {
-      resource: { model: prisma.provider, client: prisma },
+      resource: providerResource,
       options: {
         navigation: {
           name: 'Providers',
@@ -47,7 +53,7 @@ const options = {
       },
     },
     {
-      resource: { model: prisma.patient, client: prisma },
+      resource: patientResource,
       options: {
         navigation: {
           name: 'Patients',
@@ -92,7 +98,7 @@ const options = {
       },
     },
     {
-      resource: { model: prisma.newsletter, client: prisma },
+      resource: newsletterResource,
       options: {
         navigation: {
           name: 'Newsletters',
@@ -128,7 +134,7 @@ const options = {
       },
     },
     {
-      resource: { model: prisma.campaign, client: prisma },
+      resource: campaignResource,
       options: {
         navigation: {
           name: 'Campaigns',
