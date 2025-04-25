@@ -132,7 +132,7 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ messageId:
     'X-Healthcare-Newsletter-Platform': 'v1.0',
   };
 
-  // Create the SES send command
+  // Create the SES send command - Remove 'Headers' which is not supported
   const command = new SendEmailCommand({
     Source: formatAddress(from),
     Destination: {
@@ -157,10 +157,8 @@ export async function sendEmail(options: SendEmailOptions): Promise<{ messageId:
         },
       },
     },
-    Headers: Object.entries(messageHeaders).map(([name, value]) => ({
-      Name: name,
-      Value: value,
-    })),
+    // Headers field is not supported in SendEmailCommandInput
+    // We'll add headers as message tags instead if needed
   });
 
   try {
