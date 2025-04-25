@@ -12,7 +12,7 @@ export interface MJMLRenderOptions {
   /** MJML parsing options */
   mjmlOptions?: MJMLParsingOptions;
   /** Values to interpolate in the rendered template */
-  templateData?: Record<string, any>;
+  templateData?: Record<string, any>; 
 }
 
 /**
