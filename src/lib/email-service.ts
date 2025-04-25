@@ -190,7 +190,7 @@ export async function sendTestEmail(
     from: {
       email: process.env.DEFAULT_SENDER_EMAIL || 'no-reply@yourprovider.com',
       name: process.env.DEFAULT_SENDER_NAME || 'Healthcare Newsletter Platform',
-    },
+    }, 
     to: [{ email: recipientEmail }],
     template,
     templateFormat,
