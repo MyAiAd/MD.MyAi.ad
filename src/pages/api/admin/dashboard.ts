@@ -1,6 +1,8 @@
 // src/pages/api/admin/dashboard.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { Database } from '../../../lib/database.types';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -8,7 +10,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   // Create authenticated Supabase client
-  const supabase = createServerSupabaseClient({ req, res });
+  const supabase = createServerSupabaseClient<Database>({ req, res });
 
   // Check if user is authenticated
   const {
@@ -121,7 +123,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 }
 
-async function getEngagementData(supabase, providerId) {
+async function getEngagementData(supabase: SupabaseClient<Database>, providerId: string) {
   // Fetch the last 5 campaigns
   const { data: campaigns } = await supabase
     .from('newsletter_campaigns')
