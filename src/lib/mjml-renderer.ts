@@ -1,6 +1,7 @@
 // src/lib/mjml-renderer.ts
 import mjml2html from 'mjml';
 import { render } from 'mjml-react';
+import React from 'react'; // Add this import
 import type { ComponentType } from 'react';
 import type { MJMLParsingOptions } from 'mjml-core';
 
@@ -28,7 +29,7 @@ export function renderMJMLComponent(
   options: MJMLRenderOptions = {}
 ): string {
   // Render the React component to MJML
-  const { html, errors } = render(<Component {...props} />, options.mjmlOptions || {
+  const { html, errors } = render(React.createElement(Component, props), options.mjmlOptions || {
     validationLevel: 'soft',
     minify: true,
   });
