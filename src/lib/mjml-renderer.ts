@@ -1,7 +1,7 @@
 // src/lib/mjml-renderer.ts
 import mjml2html from 'mjml';
 import { render } from 'mjml-react';
-import React from 'react'; // Add this import
+import React from 'react';
 import type { ComponentType } from 'react';
 import type { MJMLParsingOptions } from 'mjml-core';
 
@@ -12,7 +12,7 @@ export interface MJMLRenderOptions {
   /** MJML parsing options */
   mjmlOptions?: MJMLParsingOptions;
   /** Values to interpolate in the rendered template */
-  templateData?: Record<string, any>; 
+  templateData?: Record<string, any>;
 }
 
 /**
@@ -79,7 +79,7 @@ export function processTemplate(
   data: Record<string, any> = {}
 ): string {
   return template.replace(/\{\{([^}]+)\}\}/g, (_, key) => {
-    const value = key.split('.').reduce((obj, prop) => obj?.[prop], data);
+    const value = key.split('.').reduce((obj: any, prop: string) => obj?.[prop], data);
     return value !== undefined ? String(value) : '';
   });
 }
