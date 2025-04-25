@@ -35,7 +35,7 @@ async function processNewsletterQueue() {
   if (queueLength === 0) return;
   
   // Move a job from the queue to processing
-  const jobData = await redis.bRPopLPush(
+  const jobData = await redis.brPopLPush(
     redisKeys.newsletterQueue,
     redisKeys.newsletterProcessing,
     5 // Timeout in seconds
