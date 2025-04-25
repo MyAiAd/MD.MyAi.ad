@@ -39,7 +39,7 @@ export async function signInProvider(email: string, password: string) {
 export async function createProviderAccount(
   email: string, 
   password: string, 
-  providerData: Database['public']['Tables']['healthcare_providers']['Insert']
+  providerInfo: Database['public']['Tables']['healthcare_providers']['Insert']
 ) {
   // First, create the auth user
   const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -56,7 +56,7 @@ export async function createProviderAccount(
     .from('healthcare_providers')
     .insert({
       id: authData.user?.id,
-      ...providerData
+      ...providerInfo
     })
     .select()
     .single();
