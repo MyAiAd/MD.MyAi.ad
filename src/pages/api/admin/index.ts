@@ -91,7 +91,8 @@ const setup = async () => {
   return app;
 };
 
-let handler;
+// Define a proper type for the handler
+let handler: express.Application | null = null;
 
 export default async function adminHandler(req: NextApiRequest, res: NextApiResponse) {
   if (!handler) {
