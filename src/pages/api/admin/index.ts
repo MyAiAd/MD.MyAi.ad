@@ -18,9 +18,16 @@ const setup = async () => {
   
   // Set up session store
   const ConnectSession = Connect(session);
+  
+  // Ensure DATABASE_URL is available or use a default value
+  const databaseUrl = process.env.DATABASE_URL || '';
+  if (!databaseUrl) {
+    console.warn('DATABASE_URL is not set. Admin sessions may not work properly.');
+  }
+  
   const sessionStore = new ConnectSession({
     conObject: {
-      connectionString: process.env.DATABASE_URL,
+      connectionString: databaseUrl,
       ssl: process.env.NODE_ENV === 'production',
     },
     tableName: 'admin_sessions',
@@ -67,7 +74,7 @@ const setup = async () => {
     null,
     {
       store: sessionStore,
-      resave: false, 
+      resave: false,
       saveUninitialized: false,
       secret: process.env.COOKIE_SECRET || 'complex-secure-cookie-password-at-least-32-characters',
       cookie: {
