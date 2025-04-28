@@ -8,6 +8,9 @@ import express from 'express';
 import { getAdminJSConfig } from '@/admin/adminjs';
 import { supabase } from '@/lib/supabase';
 
+// Import the Application type directly
+import type { Application } from 'express';
+
 // This file sets up the AdminJS server using API routes
 // For production, you would typically use a custom server.js
 
@@ -91,8 +94,8 @@ const setup = async () => {
   return app;
 };
 
-// Define a proper type for the handler
-let handler: express.Application | null = null;
+// Define a proper type for the handler using imported Application type
+let handler: Application | null = null;
 
 export default async function adminHandler(req: NextApiRequest, res: NextApiResponse) {
   if (!handler) {
