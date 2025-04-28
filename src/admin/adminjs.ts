@@ -191,4 +191,10 @@ const options = {
   },
 };
 
+// Export a function to get the AdminJS configuration
+export const getAdminJSConfig = async () => {
+  return options;
+};
+
+// Also keep the default export for backward compatibility
 export default options;
