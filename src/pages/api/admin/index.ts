@@ -8,8 +8,8 @@ import express from 'express';
 import { getAdminJSConfig } from '@/admin/adminjs';
 import { supabase } from '@/lib/supabase';
 
-// Import the Application type directly
-import type { Application } from 'express';
+// Import express RequestHandler
+import type { RequestHandler } from 'express';
 
 // This file sets up the AdminJS server using API routes
 // For production, you would typically use a custom server.js
@@ -90,19 +90,29 @@ const setup = async () => {
   
   // Use the admin router
   app.use(admin.options.rootPath, adminRouter);
-  
+
+  // Return express app as middleware handler function
   return app;
 };
 
-// Define a proper type for the handler using imported Application type
-let handler: Application | null = null;
+// Define handler variable with RequestHandler type
+let handler: RequestHandler | null = null;
 
 export default async function adminHandler(req: NextApiRequest, res: NextApiResponse) {
   if (!handler) {
     const app = await setup();
-    handler = app;
+    
+    // Convert Express app to a handler function
+    handler = (req, res) => {
+      app(req, res, (err) => {
+        if (err) {
+          console.error('Express middleware error:', err);
+          res.status(500).json({ error: 'Internal Server Error' });
+        }
+      });
+    };
   }
   
-  // Forward the request to the express app
+  // Now handler is a function that can be called
   return handler(req, res);
 }
