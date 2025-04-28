@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import AdminJS from 'adminjs';
 import AdminJSExpress from '@adminjs/express';
-import Connect from 'connect-pg-simple';
+import Connect from 'connect-pg-simple'; 
 import session from 'express-session';
 import express from 'express';
 import { getAdminJSConfig } from '@/admin/adminjs';
