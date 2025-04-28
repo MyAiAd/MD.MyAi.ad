@@ -1,5 +1,5 @@
 // src/types/express-session.d.ts
-declare module 'express-session' {
+declare module 'express-session' { 
   import { Store } from 'express-session';
   import { EventEmitter } from 'events';
   

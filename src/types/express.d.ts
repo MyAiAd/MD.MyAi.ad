@@ -1,5 +1,5 @@
 // src/types/express.d.ts
-declare module 'express' {
+declare module 'express' { 
   import * as http from 'http';
   import * as events from 'events';
 
