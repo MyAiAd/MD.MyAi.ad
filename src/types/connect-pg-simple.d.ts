@@ -3,7 +3,7 @@ declare module 'connect-pg-simple' {
   import session from 'express-session';
   
   interface ConnectPgSimpleOptions {
-    conObject: {
+    conObject: { 
       connectionString: string;
       ssl?: boolean;
     };

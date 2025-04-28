@@ -67,7 +67,7 @@ const setup = async () => {
     null,
     {
       store: sessionStore,
-      resave: false,
+      resave: false, 
       saveUninitialized: false,
       secret: process.env.COOKIE_SECRET || 'complex-secure-cookie-password-at-least-32-characters',
       cookie: {
