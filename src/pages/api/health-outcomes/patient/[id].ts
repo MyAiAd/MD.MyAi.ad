@@ -14,6 +14,52 @@ interface GroupedOutcomes {
   [condition: string]: HealthOutcome[];
 }
 
+// Define the engagement data structure
+interface EngagementData {
+  id: string;
+  email_sent: boolean;
+  email_delivered: boolean;
+  email_opened: boolean;
+  links_clicked: string[] | null;
+  open_timestamp: string | null;
+  campaign: {
+    id: string;
+    name: string;
+    scheduled_date: string;
+    sent_date: string;
+    template?: {
+      id: string;
+      name: string;
+      target_conditions: string[];
+    };
+  } | null;
+}
+
+// Define timeline item types
+interface TimelineItemBase {
+  type: string;
+  date: string;
+}
+
+interface HealthOutcomeTimelineItem extends TimelineItemBase {
+  type: 'health_outcome';
+  data: HealthOutcome;
+}
+
+interface NewsletterTimelineItem extends TimelineItemBase {
+  type: 'newsletter';
+  data: {
+    campaignId: string;
+    campaignName: string;
+    opened: boolean;
+    clicked: boolean;
+    openTimestamp: string | null;
+    targetConditions: string[];
+  };
+}
+
+type TimelineItem = HealthOutcomeTimelineItem | NewsletterTimelineItem;
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -113,7 +159,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     };
 
     // Create a timeline of health outcomes and newsletter engagements
-    const timelineItems = [];
+    const timelineItems: TimelineItem[] = [];
     
     // Add health outcomes to timeline
     outcomes.forEach((outcome: HealthOutcome) => {
@@ -125,7 +171,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     
     // Add newsletter engagements to timeline
-    engagementData.forEach(engagement => {
+    engagementData.forEach((engagement: EngagementData) => {
       if (engagement.campaign) {
         timelineItems.push({
           type: 'newsletter',
