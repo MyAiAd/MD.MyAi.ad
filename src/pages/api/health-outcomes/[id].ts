@@ -79,8 +79,8 @@ async function handleUpdateOutcome(
       provider_id: providerId,
     });
 
-    // Remove id and provider_id from the update data
-    const { id, provider_id, ...updateData } = validatedData;
+    // Remove provider_id from the update data if it exists
+    const { provider_id, ...updateData } = validatedData;
 
     // Update the health outcome
     const { data: outcome, error } = await supabase
