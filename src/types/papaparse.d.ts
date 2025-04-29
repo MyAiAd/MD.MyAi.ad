@@ -2,7 +2,7 @@
 declare module 'papaparse' {
   export interface ParseConfig {
     delimiter?: string;
-    newline?: string;
+    newline?: string; 
     quoteChar?: string;
     escapeChar?: string;
     header?: boolean;
