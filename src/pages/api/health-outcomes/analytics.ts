@@ -2,6 +2,32 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
+// Define interfaces for better type safety
+interface HealthOutcome {
+  condition: string;
+  measurement_type: string;
+  measurement_value: number;
+  measurement_date: string;
+  notes?: string | null;
+  [key: string]: any;
+}
+
+interface GroupData {
+  condition: string;
+  measurementType: string;
+  measurements: Array<{
+    value: number;
+    date: string;
+    notes?: string | null;
+  }>;
+  [key: string]: any;
+}
+
+// Interface for grouped data with string index signature
+interface GroupedDataMap {
+  [key: string]: GroupData;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -20,214 +46,65 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   const providerId = session.user.id;
-  const { patientId, condition, timeframe = '6m' } = req.query;
-
+  
+  // For patient-specific analytics
+  const patientId = req.query.patientId as string;
+  
   try {
-    // Calculate the start date based on the timeframe
-    const now = new Date();
-    let startDate = new Date();
-    
-    switch (timeframe) {
-      case '1m':
-        startDate.setMonth(now.getMonth() - 1);
-        break;
-      case '3m':
-        startDate.setMonth(now.getMonth() - 3);
-        break;
-      case '6m':
-        startDate.setMonth(now.getMonth() - 6);
-        break;
-      case '1y':
-        startDate.setFullYear(now.getFullYear() - 1);
-        break;
-      case 'all':
-        startDate = new Date(0); // Beginning of time
-        break;
-      default:
-        startDate.setMonth(now.getMonth() - 6); // Default to 6 months
-    }
-
-    // Build query based on filters
-    let query = supabase
+    // Depending on if patientId is provided, get health outcomes for a specific patient or all for the provider
+    const query = supabase
       .from('health_outcomes')
-      .select('*')
-      .eq('provider_id', providerId)
-      .gte('measurement_date', startDate.toISOString())
-      .order('measurement_date', { ascending: true });
-
+      .select('*');
+      
     if (patientId) {
-      query = query.eq('patient_id', patientId);
+      query.eq('patient_id', patientId);
     }
-
-    if (condition) {
-      query = query.eq('condition', condition);
-    }
-
-    // Execute the query
+    
+    query.eq('provider_id', providerId);
+    
     const { data: outcomes, error } = await query;
-
+    
     if (error) {
       throw error;
     }
-
-    // Process the outcomes data for visualization
-    // Group by condition and measurement type
-    const groupedData = {};
     
-    outcomes.forEach(outcome => {
-      const key = `${outcome.condition}-${outcome.measurement_type}`;
-      
-      if (!groupedData[key]) {
-        groupedData[key] = {
-          condition: outcome.condition,
-          measurementType: outcome.measurement_type,
-          data: [],
-        };
-      }
-      
-      groupedData[key].data.push({
-        date: outcome.measurement_date,
-        value: outcome.measurement_value,
-      });
-    });
-
-    // Convert to array
-    const trendsData = Object.values(groupedData);
-
-    // Get overall statistics
-    const statistics = {};
+    // Group outcomes by condition and measurement type
+    const groupedData: GroupedDataMap = {};
     
-    trendsData.forEach(trend => {
-      const key = `${trend.condition}-${trend.measurementType}`;
-      const values = trend.data.map(d => d.value);
-      
-      if (values.length > 0) {
-        const sum = values.reduce((a, b) => a + b, 0);
-        const avg = sum / values.length;
-        const min = Math.min(...values);
-        const max = Math.max(...values);
-        const latest = trend.data[trend.data.length - 1].value;
-        const first = trend.data[0].value;
-        const change = latest - first;
-        const percentChange = first !== 0 ? (change / first) * 100 : 0;
+    if (outcomes && outcomes.length > 0) {
+      outcomes.forEach((outcome: HealthOutcome) => {
+        const key = `${outcome.condition}-${outcome.measurement_type}`;
         
-        statistics[key] = {
-          condition: trend.condition,
-          measurementType: trend.measurementType,
-          average: avg,
-          minimum: min,
-          maximum: max,
-          latest,
-          change,
-          percentChange,
-        };
-      }
-    });
-
-    // Get newsletter engagement correlation
-    // This would typically involve more complex analysis with campaign data
-    // For demonstration, we'll just create mock correlation data
-    const correlations = [];
-    
-    if (trendsData.length > 0 && patientId) {
-      // Fetch patient's newsletter engagement
-      const { data: analytics, error: analyticsError } = await supabase
-        .from('newsletter_analytics')
-        .select(`
-          email_opened,
-          campaign:campaign_id(
-            id,
-            name,
-            sent_date
-          )
-        `)
-        .eq('patient_id', patientId)
-        .order('created_at', { ascending: true });
-        
-      if (analyticsError) {
-        throw analyticsError;
-      }
-      
-      // Calculate engagement rate over time
-      const engagementByMonth = {};
-      
-      analytics.forEach(record => {
-        if (record.campaign && record.campaign.sent_date) {
-          const date = new Date(record.campaign.sent_date);
-          const monthKey = `${date.getFullYear()}-${date.getMonth() + 1}`;
-          
-          if (!engagementByMonth[monthKey]) {
-            engagementByMonth[monthKey] = {
-              total: 0,
-              opened: 0,
-              date,
-            };
-          }
-          
-          engagementByMonth[monthKey].total++;
-          if (record.email_opened) {
-            engagementByMonth[monthKey].opened++;
-          }
+        if (!groupedData[key]) {
+          groupedData[key] = {
+            condition: outcome.condition,
+            measurementType: outcome.measurement_type,
+            measurements: []
+          };
         }
-      });
-      
-      // Calculate engagement rates and match with health outcomes
-      const engagementRates = Object.values(engagementByMonth).map(month => ({
-        date: month.date,
-        rate: month.total > 0 ? (month.opened / month.total) * 100 : 0,
-      }));
-      
-      // For each trend, try to find correlation with engagement
-      trendsData.forEach(trend => {
-        // This is a simplified mock correlation analysis
-        // In a real application, this would use more sophisticated statistical methods
-        const mockCorrelation = Math.random() * 0.8 - 0.4; // Random value between -0.4 and 0.4
         
-        correlations.push({
-          condition: trend.condition,
-          measurementType: trend.measurementType,
-          correlation: mockCorrelation,
-          interpretation: interpretCorrelation(mockCorrelation),
+        groupedData[key].measurements.push({
+          value: outcome.measurement_value,
+          date: outcome.measurement_date,
+          notes: outcome.notes
         });
       });
     }
-
-    return res.status(200).json({
-      trendsData,
-      statistics,
-      correlations,
-      timeframe,
-    });
+    
+    // Convert to array for frontend consumption
+    const analyticsData = Object.values(groupedData).map(group => ({
+      ...group,
+      // Sort measurements by date
+      measurements: group.measurements.sort((a, b) => 
+        new Date(a.date).getTime() - new Date(b.date).getTime()
+      )
+    }));
+    
+    return res.status(200).json({ data: { analytics: analyticsData } });
   } catch (error) {
     if (error instanceof Error) {
       return res.status(400).json({ error: { message: error.message } });
     }
-    return res.status(500).json({ error: { message: 'Failed to retrieve health outcome analytics' } });
+    return res.status(500).json({ error: { message: 'Failed to fetch health analytics' } });
   }
 }
-
-// Helper function to interpret correlation values
-function interpretCorrelation(correlation: number): string {
-  const absCorrelation = Math.abs(correlation);
-  
-  if (absCorrelation < 0.1) {
-    return 'No meaningful correlation';
-  } else if (absCorrelation < 0.3) {
-    return correlation > 0 
-      ? 'Weak positive correlation: slight improvement with engagement' 
-      : 'Weak negative correlation: slight decline with engagement';
-  } else if (absCorrelation < 0.5) {
-    return correlation > 0 
-      ? 'Moderate positive correlation: noticeable improvement with engagement' 
-      : 'Moderate negative correlation: noticeable decline with engagement';
-  } else if (absCorrelation < 0.7) {
-    return correlation > 0 
-      ? 'Strong positive correlation: significant improvement with engagement' 
-      : 'Strong negative correlation: significant decline with engagement';
-  } else {
-    return correlation > 0 
-      ? 'Very strong positive correlation: substantial improvement with engagement' 
-      : 'Very strong negative correlation: substantial decline with engagement';
-  }
-}
-
