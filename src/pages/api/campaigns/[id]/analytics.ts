@@ -20,6 +20,14 @@ interface EngagementData {
   count: number;
 }
 
+// Define structure for analytics records
+interface NewsletterAnalyticsRecord {
+  email_delivered: boolean;
+  email_opened: boolean;
+  links_clicked: string[];
+  // Add other fields as needed
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -87,9 +95,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (analytics && analytics.length > 0) {
       const linkCounts: Record<string, number> = {};
       
-      analytics.forEach(record => {
+      analytics.forEach((record: NewsletterAnalyticsRecord) => {
         if (record.links_clicked && record.links_clicked.length > 0) {
-          record.links_clicked.forEach(link => {
+          record.links_clicked.forEach((link: string) => {
             linkCounts[link] = (linkCounts[link] || 0) + 1;
           });
         }
