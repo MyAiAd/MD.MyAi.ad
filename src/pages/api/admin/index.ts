@@ -8,16 +8,21 @@ import express from 'express';
 import { getAdminJSConfig } from '@/admin/adminjs';
 import { supabase } from '@/lib/supabase';
 
-// Import express RequestHandler
-import type { RequestHandler } from 'express';
-
 // This file sets up the AdminJS server using API routes
 // For production, you would typically use a custom server.js
 
-const setup = async () => {
-  const app = express();
+// We'll use a singleton pattern to avoid recreating the admin instance on each request
+let admin: AdminJS | null = null;
+let adminRouter: any = null;
+
+const getAdminRouter = async () => {
+  if (adminRouter) {
+    return adminRouter;
+  }
+  
+  // Set up AdminJS
   const config = await getAdminJSConfig();
-  const admin = new AdminJS(config);
+  admin = new AdminJS(config);
   
   // Set up session store
   const ConnectSession = Connect(session);
@@ -37,7 +42,7 @@ const setup = async () => {
   });
   
   // Configure admin router with authentication
-  const adminRouter = AdminJSExpress.buildAuthenticatedRouter(
+  adminRouter = AdminJSExpress.buildAuthenticatedRouter(
     admin,
     {
       authenticate: async (email, password) => {
@@ -88,31 +93,41 @@ const setup = async () => {
     }
   );
   
-  // Use the admin router
-  app.use(admin.options.rootPath, adminRouter);
-
-  // Return express app as middleware handler function
-  return app;
+  return adminRouter;
 };
 
-// Define handler variable with RequestHandler type
-let handler: RequestHandler | null = null;
-
 export default async function adminHandler(req: NextApiRequest, res: NextApiResponse) {
-  if (!handler) {
-    const app = await setup();
+  try {
+    const router = await getAdminRouter();
     
-    // Convert Express app to a handler function
-    handler = (req, res) => {
-      app(req, res, (err) => {
-        if (err) {
-          console.error('Express middleware error:', err);
-          res.status(500).json({ error: 'Internal Server Error' });
-        }
+    // Here we manually handle the request
+    // We need to adapt NextJS req/res to Express req/res
+    
+    // Adapted from: https://github.com/vercel/next.js/discussions/9419#discussioncomment-217258
+    
+    // Create a simple middleware runner
+    const runMiddleware = (middleware: Function) => {
+      return new Promise((resolve, reject) => {
+        middleware(req, res, (result: Error | null) => {
+          if (result instanceof Error) {
+            return reject(result);
+          }
+          return resolve(result);
+        });
       });
     };
+    
+    // Get the path that should be passed to the admin router
+    const adminPath = req.url?.replace(/^\/api\/admin/, '') || '/';
+    
+    // Modify the URL for the admin router
+    req.url = adminPath;
+    
+    // Run the admin router as middleware
+    await runMiddleware(router);
+    
+  } catch (error) {
+    console.error('Admin API error:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
-  
-  // Now handler is a function that can be called
-  return handler(req, res);
 }
