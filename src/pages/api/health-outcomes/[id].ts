@@ -1,6 +1,8 @@
 // src/pages/api/health-outcomes/[id].ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { healthOutcomeSchema } from '@/lib/validations/analytics';
+import { z } from 'zod';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Create authenticated Supabase client
@@ -150,4 +152,3 @@ async function handleDeleteOutcome(
     return res.status(500).json({ error: { message: 'Failed to delete health outcome' } });
   }
 }
-
