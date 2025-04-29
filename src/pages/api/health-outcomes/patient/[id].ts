@@ -14,33 +14,6 @@ interface GroupedOutcomes {
   [condition: string]: HealthOutcome[];
 }
 
-// Template interface
-interface Template {
-  id: string;
-  name: string;
-  target_conditions: string[];
-}
-
-// Campaign interface
-interface Campaign {
-  id: string;
-  name: string;
-  scheduled_date: string;
-  sent_date: string;
-  template?: Template;
-}
-
-// Define the engagement data structure
-interface EngagementData {
-  id: string;
-  email_sent: boolean;
-  email_delivered: boolean;
-  email_opened: boolean;
-  links_clicked: string[] | null;
-  open_timestamp: string | null;
-  campaign: Campaign | null;
-}
-
 // Define timeline item types
 interface TimelineItemBase {
   type: string;
@@ -177,21 +150,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     
     // Add newsletter engagements to timeline
-    if (engagementData) {
+    if (engagementData && engagementData.length > 0) {
       engagementData.forEach((engagement) => {
-        if (engagement.campaign) {
-          timelineItems.push({
-            type: 'newsletter',
-            date: engagement.campaign.sent_date,
-            data: {
-              campaignId: engagement.campaign.id,
-              campaignName: engagement.campaign.name,
-              opened: engagement.email_opened,
-              clicked: engagement.links_clicked && engagement.links_clicked.length > 0,
-              openTimestamp: engagement.open_timestamp,
-              targetConditions: engagement.campaign.template?.target_conditions || [],
-            },
-          });
+        // Safely access campaign data with checks
+        if (engagement && typeof engagement === 'object' && engagement.campaign) {
+          // Check if campaign is an array
+          if (Array.isArray(engagement.campaign)) {
+            // Handle campaign as array
+            const campaign = engagement.campaign[0]; // Get first item if it's an array
+            if (campaign) {
+              timelineItems.push({
+                type: 'newsletter',
+                date: campaign.sent_date || new Date().toISOString(),
+                data: {
+                  campaignId: campaign.id || '',
+                  campaignName: campaign.name || '',
+                  opened: !!engagement.email_opened,
+                  clicked: !!(engagement.links_clicked && engagement.links_clicked.length > 0),
+                  openTimestamp: engagement.open_timestamp || null,
+                  targetConditions: (campaign.template && Array.isArray(campaign.template.target_conditions)) 
+                    ? campaign.template.target_conditions 
+                    : [],
+                },
+              });
+            }
+          } else {
+            // Handle campaign as object
+            const campaign = engagement.campaign;
+            timelineItems.push({
+              type: 'newsletter',
+              date: campaign.sent_date || new Date().toISOString(),
+              data: {
+                campaignId: campaign.id || '',
+                campaignName: campaign.name || '',
+                opened: !!engagement.email_opened,
+                clicked: !!(engagement.links_clicked && engagement.links_clicked.length > 0),
+                openTimestamp: engagement.open_timestamp || null,
+                targetConditions: campaign.template?.target_conditions || [],
+              },
+            });
+          }
         }
       });
     }
