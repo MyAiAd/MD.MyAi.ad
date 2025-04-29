@@ -2,6 +2,26 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
+// Define interfaces for better type safety
+interface Patient {
+  health_conditions?: string[];
+  medications?: string[];
+  dietary_restrictions?: string[];
+  [key: string]: any;
+}
+
+interface Template {
+  target_conditions?: string[];
+  target_medications?: string[];
+  target_dietary?: string[];
+  [key: string]: any;
+}
+
+interface Campaign {
+  template: Template;
+  [key: string]: any;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -48,30 +68,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Filter patients based on template targeting criteria
     let targetPatients = patients || [];
-    const template = campaign.template;
+    const template = campaign.template as Template;
 
     if (template.target_conditions?.length || template.target_medications?.length || template.target_dietary?.length) {
-      targetPatients = targetPatients.filter(patient => {
+      targetPatients = targetPatients.filter((patient: Patient) => {
         // Check if patient matches any conditions
         if (template.target_conditions?.length && patient.health_conditions) {
-          const hasMatchingCondition = template.target_conditions.some(condition =>
-            patient.health_conditions.includes(condition)
+          const hasMatchingCondition = template.target_conditions.some((condition: string) =>
+            patient.health_conditions?.includes(condition)
           );
           if (hasMatchingCondition) return true;
         }
         
         // Check if patient matches any medications
         if (template.target_medications?.length && patient.medications) {
-          const hasMatchingMedication = template.target_medications.some(medication =>
-            patient.medications.includes(medication)
+          const hasMatchingMedication = template.target_medications.some((medication: string) =>
+            patient.medications?.includes(medication)
           );
           if (hasMatchingMedication) return true;
         }
         
         // Check if patient matches any dietary restrictions
         if (template.target_dietary?.length && patient.dietary_restrictions) {
-          const hasMatchingDietary = template.target_dietary.some(dietary =>
-            patient.dietary_restrictions.includes(dietary)
+          const hasMatchingDietary = template.target_dietary.some((dietary: string) =>
+            patient.dietary_restrictions?.includes(dietary)
           );
           if (hasMatchingDietary) return true;
         }

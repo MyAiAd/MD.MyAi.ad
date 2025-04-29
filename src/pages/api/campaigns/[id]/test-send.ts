@@ -5,6 +5,39 @@ import { personalizeNewsletterForPatient } from '@/lib/email-renderer';
 // Import your email sending function or service
 // import { sendEmail } from '@/lib/email';
 
+interface Provider {
+  id: string;
+  name: string;
+  custom_domain?: string;
+  [key: string]: any;
+}
+
+interface Patient {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  health_conditions: string[];
+  medications: string[];
+  dietary_restrictions: string[];
+  health_metrics: {
+    a1c: number;
+    blood_glucose: number;
+    blood_pressure: string;
+  };
+  next_appointment: string;
+  provider_id: string;
+  [key: string]: any;
+}
+
+interface Campaign {
+  id: string;
+  template_id: string;
+  subject?: string;
+  provider_id: string;
+  [key: string]: any;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -55,7 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Create mock patient data for the test send
-    const mockPatient = {
+    const mockPatient: Patient = {
       id: 'test-patient',
       first_name: 'Test',
       last_name: 'Patient',
@@ -76,7 +109,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const htmlContent = await personalizeNewsletterForPatient(
       campaign.template_id,
       mockPatient,
-      provider
+      provider as Provider
     );
 
     // Send the test email

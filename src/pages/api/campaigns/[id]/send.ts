@@ -5,6 +5,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { queueNewsletter } from '@/lib/redis';
 
+interface Campaign {
+  id: string;
+  status: string;
+  [key: string]: any;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -67,4 +73,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: { message: 'Failed to queue campaign' } });
   }
 }
-

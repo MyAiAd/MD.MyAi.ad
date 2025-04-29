@@ -3,6 +3,12 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 import { getRedisClient, redisKeys } from '@/lib/redis';
 
+interface Job {
+  id: string;
+  error?: any;
+  [key: string]: any;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -37,14 +43,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const failedJobs = await redis.lRange(redisKeys.newsletterFailed, 0, -1);
     
     // Find the job in any of the queues
-    let job;
+    let job: Job | null = null;
     let status = 'unknown';
     let progress = 0;
     let error = null;
     
     // Check processing queue
     for (const jobData of processingJobs) {
-      const parsedJob = JSON.parse(jobData);
+      const parsedJob = JSON.parse(jobData) as Job;
       if (parsedJob.id === jobId) {
         job = parsedJob;
         status = 'processing';
@@ -61,7 +67,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Check queued jobs if not found
     if (!job) {
       for (const jobData of queuedJobs) {
-        const parsedJob = JSON.parse(jobData);
+        const parsedJob = JSON.parse(jobData) as Job;
         if (parsedJob.id === jobId) {
           job = parsedJob;
           status = 'queued';
@@ -73,7 +79,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Check failed jobs if still not found
     if (!job) {
       for (const jobData of failedJobs) {
-        const parsedJob = JSON.parse(jobData);
+        const parsedJob = JSON.parse(jobData) as Job;
         if (parsedJob.id === jobId) {
           job = parsedJob;
           status = 'failed';
@@ -88,7 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const completedKey = `job:${jobId}:completed`;
       const completedData = await redis.get(completedKey);
       if (completedData) {
-        job = JSON.parse(completedData);
+        job = JSON.parse(completedData) as Job;
         status = 'completed';
         progress = 100;
       }
@@ -112,4 +118,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: { message: 'Failed to fetch job status' } });
   }
 }
-
