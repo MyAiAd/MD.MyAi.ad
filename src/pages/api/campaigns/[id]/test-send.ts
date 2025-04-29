@@ -1,9 +1,8 @@
 // src/pages/api/campaigns/[id]/test-send.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
-import { personalizeNewsletterForPatient } from '@/lib/email-renderer';
-// Import your email sending function or service
-// import { sendEmail } from '@/lib/email';
+import EmailRenderer from '@/lib/email-renderer';
+import { PrismaClient } from '@prisma/client';
 
 interface Provider {
   id: string;
@@ -35,6 +34,10 @@ interface Campaign {
   template_id: string;
   subject?: string;
   provider_id: string;
+  template: {
+    type: string;
+    [key: string]: any;
+  };
   [key: string]: any;
 }
 
@@ -105,11 +108,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       provider_id: providerId,
     };
 
-    // Generate personalized newsletter
-    const htmlContent = await personalizeNewsletterForPatient(
-      campaign.template_id,
-      mockPatient,
-      provider as Provider
+    // Initialize Prisma client
+    const prisma = new PrismaClient();
+    
+    // Create email renderer
+    const emailRenderer = new EmailRenderer(prisma);
+    
+    // Determine template type from the campaign template
+    const templateType = campaign.template.type as any; // This may need to be adjusted based on your schema
+    
+    // Generate personalized newsletter using the EmailRenderer
+    const htmlContent = await emailRenderer.renderTemplate(
+      templateType,
+      {
+        patient: mockPatient,
+        provider: provider as Provider,
+        campaign
+      }
     );
 
     // Send the test email
@@ -125,6 +140,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     
     // For now, just log the send and return success
     console.log(`Test email would be sent to ${email}`);
+
+    // Close Prisma client
+    await prisma.$disconnect();
 
     return res.status(200).json({
       success: true,
