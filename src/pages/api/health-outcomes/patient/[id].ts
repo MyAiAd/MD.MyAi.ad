@@ -2,6 +2,18 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
+interface HealthOutcome {
+  condition: string;
+  patient_id: string;
+  provider_id: string;
+  measurement_date: string;
+  [key: string]: any; // For other properties that might exist in the outcome
+}
+
+interface GroupedOutcomes {
+  [condition: string]: HealthOutcome[];
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -48,9 +60,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Group outcomes by condition
-    const groupedOutcomes = {};
+    const groupedOutcomes: GroupedOutcomes = {};
     
-    outcomes.forEach(outcome => {
+    outcomes.forEach((outcome: HealthOutcome) => {
       if (!groupedOutcomes[outcome.condition]) {
         groupedOutcomes[outcome.condition] = [];
       }
@@ -104,7 +116,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const timelineItems = [];
     
     // Add health outcomes to timeline
-    outcomes.forEach(outcome => {
+    outcomes.forEach((outcome: HealthOutcome) => {
       timelineItems.push({
         type: 'health_outcome',
         date: outcome.measurement_date,
@@ -149,4 +161,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: { message: 'Failed to retrieve patient health outcomes' } });
   }
 }
-
