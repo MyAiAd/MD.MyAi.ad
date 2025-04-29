@@ -92,7 +92,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }));
 
     // Verify all patients belong to the provider
-    const patientIds = [...new Set(outcomes.map(outcome => outcome.patient_id))];
+    // Create a unique array of patient IDs without using Set spread (to support older JS targets)
+    const patientIdMap: { [key: string]: boolean } = {};
+    outcomes.forEach(outcome => {
+      patientIdMap[outcome.patient_id] = true;
+    });
+    const patientIds = Object.keys(patientIdMap);
     
     const { data: patients, error: patientError } = await supabase
       .from('patients')
