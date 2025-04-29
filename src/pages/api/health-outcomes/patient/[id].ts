@@ -39,6 +39,40 @@ interface NewsletterTimelineItem extends TimelineItemBase {
 
 type TimelineItem = HealthOutcomeTimelineItem | NewsletterTimelineItem;
 
+// Helper function to safely extract target conditions
+function getTargetConditions(template: any): string[] {
+  if (!template) {
+    return [];
+  }
+  
+  // If template is an array, get the first item
+  if (Array.isArray(template)) {
+    const firstTemplate = template[0];
+    if (!firstTemplate) {
+      return [];
+    }
+    
+    // Check for target_conditions on the first template
+    if (Array.isArray(firstTemplate.target_conditions)) {
+      return firstTemplate.target_conditions;
+    } else if (firstTemplate.target_conditions) {
+      // If it's not an array but exists, convert to array
+      return [firstTemplate.target_conditions.toString()];
+    }
+    return [];
+  }
+  
+  // If template is an object
+  if (Array.isArray(template.target_conditions)) {
+    return template.target_conditions;
+  } else if (template.target_conditions) {
+    // If it's not an array but exists, convert to array
+    return [template.target_conditions.toString()];
+  }
+  
+  return [];
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -168,9 +202,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                   opened: !!engagement.email_opened,
                   clicked: !!(engagement.links_clicked && engagement.links_clicked.length > 0),
                   openTimestamp: engagement.open_timestamp || null,
-                  targetConditions: (campaign.template && Array.isArray(campaign.template.target_conditions)) 
-                    ? campaign.template.target_conditions 
-                    : [],
+                  targetConditions: getTargetConditions(campaign.template),
                 },
               });
             }
@@ -186,7 +218,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 opened: !!engagement.email_opened,
                 clicked: !!(engagement.links_clicked && engagement.links_clicked.length > 0),
                 openTimestamp: engagement.open_timestamp || null,
-                targetConditions: campaign.template?.target_conditions || [],
+                targetConditions: getTargetConditions(campaign.template),
               },
             });
           }
