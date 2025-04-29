@@ -2,6 +2,24 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { createServerSupabaseClient } from '@supabase/auth-helpers-nextjs';
 
+// Define types for our analytics data
+interface LinkClickData {
+  id: string;
+  label: string;
+  value: number;
+}
+
+interface DeviceData {
+  id: string;
+  label: string;
+  value: number;
+}
+
+interface EngagementData {
+  category: string;
+  count: number;
+}
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
     return res.status(405).json({ error: { message: 'Method not allowed' } });
@@ -57,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const clickRate = opened > 0 ? Math.round((clicked / opened) * 100) : 0;
 
     // Prepare engagement data for chart
-    const engagementData = [
+    const engagementData: EngagementData[] = [
       { category: 'Sent', count: sent },
       { category: 'Delivered', count: delivered },
       { category: 'Opened', count: opened },
@@ -65,9 +83,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     ];
 
     // Get link click distribution
-    const linkClickData = [];
+    const linkClickData: LinkClickData[] = [];
     if (analytics && analytics.length > 0) {
-      const linkCounts = {};
+      const linkCounts: Record<string, number> = {};
       
       analytics.forEach(record => {
         if (record.links_clicked && record.links_clicked.length > 0) {
@@ -87,7 +105,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Get device distribution
-    const deviceData = [
+    const deviceData: DeviceData[] = [
       { id: 'Desktop', label: 'Desktop', value: Math.round(opened * 0.45) }, // Mock data
       { id: 'Mobile', label: 'Mobile', value: Math.round(opened * 0.40) },   // Mock data
       { id: 'Tablet', label: 'Tablet', value: Math.round(opened * 0.15) },   // Mock data
@@ -112,4 +130,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(500).json({ error: { message: 'Failed to fetch campaign analytics' } });
   }
 }
-
