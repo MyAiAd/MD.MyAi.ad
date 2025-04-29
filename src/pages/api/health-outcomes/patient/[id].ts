@@ -14,6 +14,22 @@ interface GroupedOutcomes {
   [condition: string]: HealthOutcome[];
 }
 
+// Template interface
+interface Template {
+  id: string;
+  name: string;
+  target_conditions: string[];
+}
+
+// Campaign interface
+interface Campaign {
+  id: string;
+  name: string;
+  scheduled_date: string;
+  sent_date: string;
+  template?: Template;
+}
+
 // Define the engagement data structure
 interface EngagementData {
   id: string;
@@ -22,17 +38,7 @@ interface EngagementData {
   email_opened: boolean;
   links_clicked: string[] | null;
   open_timestamp: string | null;
-  campaign: {
-    id: string;
-    name: string;
-    scheduled_date: string;
-    sent_date: string;
-    template?: {
-      id: string;
-      name: string;
-      target_conditions: string[];
-    };
-  } | null;
+  campaign: Campaign | null;
 }
 
 // Define timeline item types
@@ -171,22 +177,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     
     // Add newsletter engagements to timeline
-    engagementData.forEach((engagement: EngagementData) => {
-      if (engagement.campaign) {
-        timelineItems.push({
-          type: 'newsletter',
-          date: engagement.campaign.sent_date,
-          data: {
-            campaignId: engagement.campaign.id,
-            campaignName: engagement.campaign.name,
-            opened: engagement.email_opened,
-            clicked: engagement.links_clicked && engagement.links_clicked.length > 0,
-            openTimestamp: engagement.open_timestamp,
-            targetConditions: engagement.campaign.template?.target_conditions || [],
-          },
-        });
-      }
-    });
+    if (engagementData) {
+      engagementData.forEach((engagement) => {
+        if (engagement.campaign) {
+          timelineItems.push({
+            type: 'newsletter',
+            date: engagement.campaign.sent_date,
+            data: {
+              campaignId: engagement.campaign.id,
+              campaignName: engagement.campaign.name,
+              opened: engagement.email_opened,
+              clicked: engagement.links_clicked && engagement.links_clicked.length > 0,
+              openTimestamp: engagement.open_timestamp,
+              targetConditions: engagement.campaign.template?.target_conditions || [],
+            },
+          });
+        }
+      });
+    }
     
     // Sort timeline by date descending
     timelineItems.sort((a, b) => {
